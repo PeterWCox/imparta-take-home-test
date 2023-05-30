@@ -13,3 +13,6 @@ lerna-debug.log*
 **/node_modules
 **/dist
 **/dist
+TaskList.Backend/TaskList.Backend/.vs/TaskList.Backend/FileContentIndex/f1659901-a05c-4fde-a1d1-21e95fd81e2d.vsidx
+TaskList.Backend/TaskList.Backend/.vs/TaskList.Backend/FileContentIndex/read.lock
+TaskList.Backend/TaskList.Backend/.vs/TaskList.Backend/v17/.suo
