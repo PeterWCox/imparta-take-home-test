@@ -1,0 +1,27 @@
+Imparta Takehome Test														
+									OOP Design 					
+User Stories (Informal)														
+*	Ali wants a simple way of managing the list of jobs that his boss gives him								Task 		TS	C#		
+*	Ali wants it to be platform-agnostic 								id		number	int		
+*	Bob (Ali's boss) wants to know which jobs have been completed								title		string	string		
+*	Bob wants to know which jobs have been completed								status		union	enum		"""Pending"" | ""In progress"" | ""Completed"""
+*	Bob wants to know updates on the jobs that are in progress								isDone		boolean	boolean		
+														
+Tech Stack 														
+*	Backend - ASP.NET Core (WebAPI)								Task 		TS	C#		
+*	Frontend - React (Vite) + Redux Toolkit + TypeScript + react-hook-forms								id		number	int		
+*	"UX library - FluentUI (Looks nice, also suits a work domain (Microsofts own framework)"								title		string	string		
+									status		union	enum		"""Pending"" | ""In progress"" | ""Completed"""
+Schema									isDone		boolean	boolean		
+														
+User														
+Id	string													
+DisplayName	string													
+EmailAddress	string													
+TaskListIds	int[]													
+														
+TaskList														
+Id	string													
+DisplayName	string													
+EmailAddress	string													
+TaskListIds	int[]													
