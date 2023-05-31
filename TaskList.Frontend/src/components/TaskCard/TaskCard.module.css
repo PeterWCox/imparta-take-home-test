@@ -8,9 +8,14 @@
 
 .icon {
     padding: 5px;
+    cursor: pointer;
+}
+
+.title {
+    flex-grow: 1;
+    cursor: pointer;
 }
 
 .done {
     text-decoration: line-through;
-    /* color: #ccc; */
 }

@@ -1,5 +1,7 @@
+@import '../../css/variables/variables.css';
+
 .taskList {
     display: flex;
     flex-direction: column;
-    gap: 10;
+    row-gap: var(--spacing-7);
 }

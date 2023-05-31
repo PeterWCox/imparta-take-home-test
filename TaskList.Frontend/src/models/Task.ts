@@ -5,4 +5,6 @@ export interface Task {
     isDone: boolean
 }
 
+export type PartialTask = Partial<Task>
+
 export type Status = 'Pending' | 'In progresss' | 'Completed'

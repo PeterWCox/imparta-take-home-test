@@ -1,56 +1,61 @@
 import { Text } from '@fluentui/react'
-import React from 'react'
 import { ShowCompletedTasks } from '../ShowCompletedTasks/ShowCompletedTasks'
-import { Task } from '../../models/Task'
 import { TaskList } from '../TaskList/TaskList'
 import styles from './TaskColumn.module.css'
+import { useState } from 'react'
+import { Status, Task } from '../../models/Task'
+import { useAppSelector } from '../../redux/hooks'
+import { TaskCardLoading } from '../TaskCard/TaskCardLoading'
 
 export interface ITaskColumnProps {
-    title: string
+    status: Status
 }
 
-const tasks: Task[] = [
-    {
-        id: 1,
-        title: 'Task 1',
-        isDone: false,
-        status: 'Completed',
-    },
-    {
-        id: 2,
-        title: 'Task 2',
-        isDone: false,
-        status: 'Completed',
-    },
-    {
-        id: 3,
-        title: 'Task 3',
-        isDone: true,
-        status: 'Completed',
-    },
-]
-
 export const TaskColumn = (props: ITaskColumnProps) => {
-    const [showCompletedTasks, setShowCompletedTasks] = React.useState(true)
+    //States
+    const [showCompletedTasks, setShowCompletedTasks] = useState(true)
+
+    //Hooks
+    const tasksByStatus = useAppSelector((state) =>
+        state.tasks.tasks.filter((t: any) => t.status === props.status)
+    )
+    const incompleteTasks = tasksByStatus.filter((t: Task) => !t.isDone) || []
+    const completedTasks = tasksByStatus.filter((t: Task) => t.isDone) || []
+
+    const isLoading = true
 
     return (
         <div className={styles.taskColumn}>
             {/* Status Title */}
-            <Text variant="xLarge">{props.title}</Text>
+            <Text variant="xLarge">{`${props.status} (${incompleteTasks.length})`}</Text>
 
             <div className={styles.tasksColumnContainer}>
                 {/* Incomplete tasks */}
-                <TaskList tasks={tasks.filter((t) => !t.isDone)} />
-
-                {/* Show completed tasks */}
-                <ShowCompletedTasks
-                    count={5}
-                    showCompletedTasks={showCompletedTasks}
-                    onClick={() => setShowCompletedTasks(!showCompletedTasks)}
+                <TaskList
+                    tasks={tasksByStatus.filter((t: Task) => !t.isDone)}
                 />
 
+                {/* {isLoading
+                    ? [...Array(5)].map((_, i) => <TaskCardLoading />)
+                    : null} */}
+
+                {/* Show completed tasks */}
+                {completedTasks.length > 0 ? (
+                    <ShowCompletedTasks
+                        count={completedTasks.length}
+                        showCompletedTasks={showCompletedTasks}
+                        onClick={() =>
+                            setShowCompletedTasks(!showCompletedTasks)
+                        }
+                    />
+                ) : null}
+
                 {/* Complete Tasks */}
-                <TaskList tasks={tasks.filter((t) => t.isDone)} />
+                {showCompletedTasks ? (
+                    <TaskList
+                        tasks={tasksByStatus.filter((t: Task) => t.isDone)}
+                    />
+                ) : null}
             </div>
         </div>
     )

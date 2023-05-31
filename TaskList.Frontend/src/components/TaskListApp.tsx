@@ -1,18 +1,18 @@
 import {
-    Icon,
-    Panel,
+    DefaultButton,
     Persona,
     PersonaSize,
+    PrimaryButton,
     SearchBox,
     Text,
 } from '@fluentui/react'
 import { useState } from 'react'
-import { TaskColumn } from './TaskColumn/TaskColumn'
 import { AddTask } from './AddTask/AddTask'
 import { RegisterModal } from './Register/Register'
+import { TaskColumn } from './TaskColumn/TaskColumn'
+import styles from './TaskListApp.module.css'
 
 export const TaskListApp = () => {
-    const [isPanelOpen, setIsPanelOpen] = useState(false)
     const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false)
 
     return (
@@ -21,43 +21,27 @@ export const TaskListApp = () => {
                 isModalOpen={isRegisterModalOpen}
                 hideModal={() => setIsRegisterModalOpen(false)}
             />
-            <div
-                className="wrapper"
-                style={{
-                    backgroundColor: 'red',
-                    height: '100vh',
-                    // display: 'flex',
-                    // justifyContent: 'center',
-                    // alignItems: 'center',
-                }}
-            >
-                <div
-                    className="container"
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        height: '100%',
-                    }}
-                >
+            <div className={styles.wrapper}>
+                <div className={styles.container}>
                     {/* Tasklist Panel */}
-                    <div
-                        style={{
-                            margin: '20 20 20 0',
-                            backgroundColor: 'white',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            padding: 20,
-                            gap: 20,
-                        }}
-                    >
+                    <div className={styles.leftPanel}>
+                        {/* Register Button */}
+                        <PrimaryButton
+                            text="Register"
+                            onClick={() => setIsRegisterModalOpen(true)}
+                        />
+
+                        {/* Login Button */}
+                        <DefaultButton text="Login" />
+
                         {/* Logged in status */}
                         <Persona
-                            imageInitials={'AL'}
+                            imageInitials={'PC'}
                             text={'Peter Cox'}
                             secondaryText={'Software Engineer'}
                             tertiaryText={'In a meeting'}
                             optionalText={'Available at 4:00pm'}
-                            size={PersonaSize.size40}
+                            size={PersonaSize.size56}
                             imageAlt="Annie Lindqvist, status is away"
                         />
 
@@ -74,31 +58,14 @@ export const TaskListApp = () => {
                     </div>
 
                     {/* Tasks */}
-                    <div
-                        className="tasks-container"
-                        style={{
-                            margin: '20 20 20 0',
-                            padding: 20,
-                            backgroundColor: 'yellow',
-                            width: '100%',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 25,
-                        }}
-                    >
+                    <div className={styles.tasks}>
+                        {/* Tasks List Name */}
                         <Text variant="xLargePlus">Task List Name</Text>
-                        <div
-                            className="tasks-list-container"
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                            }}
-                        >
-                            <TaskColumn title="Pending" />
-                            <TaskColumn title="In progress" />
-                            <TaskColumn title="Completed" />
+
+                        <div className={styles.statusLists}>
+                            <TaskColumn status="Pending" />
+                            <TaskColumn status="In progresss" />
+                            <TaskColumn status="Completed" />
                         </div>
 
                         {/* Add Task */}
@@ -106,14 +73,6 @@ export const TaskListApp = () => {
                     </div>
                 </div>
             </div>
-            <Panel
-                headerText="Sample panel"
-                isOpen={isPanelOpen}
-                closeButtonAriaLabel="Close"
-                onDismiss={() => setIsPanelOpen(false)}
-            >
-                <p>Content goes here.</p>
-            </Panel>
         </>
     )
 }
