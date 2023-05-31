@@ -1,23 +1,28 @@
 import { Icon, Text } from '@fluentui/react'
+import { Task } from '../../models/Task'
+import styles from './TaskCard.module.css'
 
-export const TaskCard = () => {
+export interface ITaskCardProps {
+    task: Task
+}
+
+export const TaskCard = (props: ITaskCardProps) => {
     return (
-        <div
-            className="task"
-            style={{
-                display: 'flex',
-                flexDirection: 'row',
-                boxShadow: '0px 0px 5px 0px rgba(0,0,0,0.75)',
-                alignItems: 'center',
-                padding: 5,
-            }}
-        >
-            <div>
-                <Icon iconName="CircleRing" />
+        <li className={styles.task}>
+            <div className={styles.icon}>
+                <Icon
+                    iconName={`${
+                        props.task.isDone ? 'SkypeCircleCheck' : 'CircleRing'
+                    }`}
+                />
             </div>
-            <div>
-                <Text variant="medium">Buy milk</Text>
+            <div
+                className={`${styles.title} ${
+                    props.task.isDone ? styles.done : null
+                }`}
+            >
+                <Text>{props.task.title}</Text>
             </div>
-        </div>
+        </li>
     )
 }

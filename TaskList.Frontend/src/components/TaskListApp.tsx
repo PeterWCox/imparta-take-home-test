@@ -9,12 +9,18 @@ import {
 import { useState } from 'react'
 import { TaskStatusList } from './TaskStatusList/TaskStatusList'
 import { AddTask } from './AddTask/AddTask'
+import { RegisterModal } from './Register/Register'
 
 export const TaskListApp = () => {
     const [isPanelOpen, setIsPanelOpen] = useState(false)
+    const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false)
 
     return (
         <>
+            <RegisterModal
+                isModalOpen={isRegisterModalOpen}
+                hideModal={() => setIsRegisterModalOpen(false)}
+            />
             <div
                 className="wrapper"
                 style={{

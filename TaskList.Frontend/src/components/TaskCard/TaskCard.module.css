@@ -1,0 +1,16 @@
+.task {
+    display: flex;
+    flex-direction: row;
+    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+    align-items: center;
+    padding: 5px;
+}
+
+.icon {
+    padding: 5px;
+}
+
+.done {
+    text-decoration: line-through;
+    /* color: #ccc; */
+}

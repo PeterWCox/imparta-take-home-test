@@ -10,10 +10,34 @@ import {
 } from '@fluentui/react'
 import { TaskCard } from '../TaskCard/TaskCard'
 import React from 'react'
+import { ShowCompletedTasks } from '../ShowCompletedTasks/ShowCompletedTasks'
+import { Task } from '../../models/Task'
+import { TaskList } from '../TaskList/TaskList'
 
 export interface ITaskStatusListProps {
     title: string
 }
+
+const tasks: Task[] = [
+    {
+        id: 1,
+        title: 'Task 1',
+        isDone: false,
+        status: 'In Progress',
+    },
+    {
+        id: 2,
+        title: 'Task 2',
+        isDone: false,
+        status: 'In Progress',
+    },
+    {
+        id: 3,
+        title: 'Task 3',
+        isDone: true,
+        status: 'In Progress',
+    },
+]
 
 export const TaskStatusList = (props: ITaskStatusListProps) => {
     const [showCompletedTasks, setShowCompletedTasks] = React.useState(true)
@@ -43,62 +67,17 @@ export const TaskStatusList = (props: ITaskStatusListProps) => {
                 }}
             >
                 {/* Incomplete tasks */}
-                <div
-                    className="tasks"
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 10,
-                    }}
-                >
-                    <TaskCard />
-                    <TaskCard />
-                    <TaskCard />
-                    <TaskCard />
-                    <TaskCard />
-                    <TaskCard />
-                    <TaskCard />
-                    <TaskCard />
-                    <TaskCard />
-                    <TaskCard />
-                    <TaskCard />
-                    <TaskCard />
-                </div>
+                <TaskList tasks={tasks.filter((t) => !t.isDone)} />
 
                 {/* Show completed tasks */}
-                <PrimaryButton
-                    text="Completed (5)"
-                    styles={{
-                        root: {
-                            padding: 10,
-                            width: 'fit-content',
-                        },
-                    }}
+                <ShowCompletedTasks
+                    count={5}
+                    showCompletedTasks={showCompletedTasks}
                     onClick={() => setShowCompletedTasks(!showCompletedTasks)}
-                    iconProps={{
-                        iconName: showCompletedTasks
-                            ? 'ChevronDown'
-                            : 'ChevronRight',
-                    }}
                 />
 
                 {/* Complete Tasks */}
-                {showCompletedTasks ? (
-                    <div
-                        className="tasks"
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                        }}
-                    >
-                        <TaskCard />
-                        <TaskCard />
-                        <TaskCard />
-                        <TaskCard />
-                        <TaskCard />
-                        <TaskCard />
-                    </div>
-                ) : null}
+                <TaskList tasks={tasks.filter((t) => t.isDone)} />
             </div>
         </div>
     )
