@@ -1,20 +1,31 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 html {
-  color-scheme: light dark;
+    color-scheme: light dark;
 }
 
 main {
-  width: min(70ch, 100%-4rem);
-  margin-inline: auto;
+    width: min(70ch, 100%-4rem);
+    margin-inline: auto;
 }
 
 body {
-  font-family: system-ui;
-  font-size: 1.125rem;
-  line-height: 1.5;
+    font-family: system-ui;
+    font-size: 1.125rem;
+    line-height: 1.5;
 }
 
 img,
 svg,
 video {
-  max-width: 100%;
+    max-width: 100%;
+}
+
+html,
+body {
+    min-height: 100%;
 }

@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { initializeIcons } from "@fluentui/react/lib/Icons";
-import { TaskListApp } from "./components/TaskList/TaskListApp";
+import { TaskListApp } from "./components/TaskListApp";
 
 const queryClient = new QueryClient();
 initializeIcons(/* optional base url */);
