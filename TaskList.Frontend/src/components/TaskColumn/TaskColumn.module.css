@@ -1,0 +1,17 @@
+.taskColumn {
+    width: 33%;
+    background-color: white;
+    padding: 20px;
+    border-radius: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.tasksColumnContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-x: hidden;
+    padding: 20px;
+}

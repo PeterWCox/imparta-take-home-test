@@ -7,7 +7,7 @@ import {
     Text,
 } from '@fluentui/react'
 import { useState } from 'react'
-import { TaskStatusList } from './TaskStatusList/TaskStatusList'
+import { TaskColumn } from './TaskColumn/TaskColumn'
 import { AddTask } from './AddTask/AddTask'
 import { RegisterModal } from './Register/Register'
 
@@ -96,9 +96,9 @@ export const TaskListApp = () => {
                                 alignItems: 'center',
                             }}
                         >
-                            <TaskStatusList title="Pending" />
-                            <TaskStatusList title="In progress" />
-                            <TaskStatusList title="Completed" />
+                            <TaskColumn title="Pending" />
+                            <TaskColumn title="In progress" />
+                            <TaskColumn title="Completed" />
                         </div>
 
                         {/* Add Task */}

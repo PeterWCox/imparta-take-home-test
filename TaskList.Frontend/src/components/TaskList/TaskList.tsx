@@ -8,16 +8,9 @@ export interface ITaskListProps {
 
 export const TaskList = (props: ITaskListProps) => {
     return (
-        <ul
-            className={styles.taskList}
-            // style={{
-            //     display: 'flex',
-            //     flexDirection: 'column',
-            //     gap: 10,
-            // }}
-        >
+        <ul className={styles.taskList}>
             {props.tasks.map((task) => (
-                <TaskCard task={task} />
+                <TaskCard key={task.id} task={task} />
             ))}
         </ul>
     )
