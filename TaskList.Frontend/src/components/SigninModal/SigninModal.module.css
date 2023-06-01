@@ -1,0 +1,27 @@
+.container {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: stretch;
+    gap: 20;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-weight: 500;
+    padding: 12px 12px 14px 24px;
+}
+
+.body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 0 24px 24px 24px;
+}
+
+.buttonGroup {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}

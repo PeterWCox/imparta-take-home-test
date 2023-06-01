@@ -3,12 +3,12 @@ import { ApiRepository } from './base/ApiRepositoryBase'
 
 export interface ITaskRepository {
     getTasks(): Promise<Task[]>
-    addTask(task: Task): Promise<void>
-    updateTask(task: Task): Promise<void>
-    deleteTask(task: Task): Promise<void>
+    addTask(title: string): Promise<Task>
+    updateTask(id: number, task: Task): Promise<void>
+    deleteTask(id: number): Promise<void>
 }
 
-export class TaskRepository
+export class TaskRepositoryApi
     extends ApiRepository<Task>
     implements ITaskRepository
 {
@@ -17,18 +17,20 @@ export class TaskRepository
     }
 
     public getTasks = async (): Promise<Task[]> => {
-        return await this.get('api/tasks')
+        return await this.get('tasks')
     }
 
-    public addTask = async (task: Task): Promise<void> => {
-        await this.add('api/todoitem', task)
+    public addTask = async (title: string): Promise<Task> => {
+        return await this.add('tasks', {
+            title,
+        })
     }
 
-    public updateTask = async (task: Task): Promise<void> => {
-        await this.put('api/todoitem', task)
+    public updateTask = async (id: number, task: Task): Promise<void> => {
+        await this.update(`tasks/${id}`, task)
     }
 
-    public deleteTask = async (id: Task): Promise<void> => {
-        await this.delete(`api/todoitem/${id}`)
+    public deleteTask = async (id: number): Promise<void> => {
+        await this.delete(`tasks/${id}`)
     }
 }

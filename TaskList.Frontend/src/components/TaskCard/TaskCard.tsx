@@ -1,11 +1,12 @@
-import { Icon, Panel, Text } from '@fluentui/react'
-import { Task } from '../../models/Task'
-import styles from './TaskCard.module.css'
+import { Icon, Text } from '@fluentui/react'
 import { useCallback, useState } from 'react'
+import { Task } from '../../models/Task'
 import { useAppDispatch } from '../../redux/hooks'
-import { updateTask } from '../../redux/slices/tasksSlice'
-import { EditTaskPanel } from '../EditTaskPanel/EditTaskPanel'
+import styles from './TaskCard.module.css'
+// import { updateTask } from '../../redux/slices/tasksSlice'
 import { useBoolean } from '@fluentui/react-hooks'
+import { thunkUpdateTask } from '../../redux/slices/tasksSlice'
+import { EditTaskPanel } from '../EditTaskPanel/EditTaskPanel'
 
 export interface ITaskCardProps {
     task: Task
@@ -23,7 +24,7 @@ export const TaskCard = (props: ITaskCardProps) => {
     //Handlers
     const onCheckboxClick = useCallback(() => {
         dispatch(
-            updateTask({
+            thunkUpdateTask(props.task.id, {
                 ...props.task,
                 isDone: !props.task.isDone,
             })

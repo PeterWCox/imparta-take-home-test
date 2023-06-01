@@ -1,13 +1,13 @@
 import { Text } from '@fluentui/react'
-import { ShowCompletedTasks } from '../ShowCompletedTasks/ShowCompletedTasks'
-import { TaskList } from '../TaskList/TaskList'
-import styles from './TaskColumn.module.css'
 import { useState } from 'react'
 import { Status, Task } from '../../models/Task'
 import { useAppSelector } from '../../redux/hooks'
-import { TaskCardLoading } from '../TaskCard/TaskCardLoading'
+import { ShowCompletedTasks } from '../ShowCompletedTasks/ShowCompletedTasks'
+import { TaskList } from '../TaskList/TaskList'
+import styles from './TaskColumn.module.css'
 
 export interface ITaskColumnProps {
+    tasks: Task[]
     status: Status
 }
 
@@ -21,8 +21,6 @@ export const TaskColumn = (props: ITaskColumnProps) => {
     )
     const incompleteTasks = tasksByStatus.filter((t: Task) => !t.isDone) || []
     const completedTasks = tasksByStatus.filter((t: Task) => t.isDone) || []
-
-    const isLoading = true
 
     return (
         <div className={styles.taskColumn}>

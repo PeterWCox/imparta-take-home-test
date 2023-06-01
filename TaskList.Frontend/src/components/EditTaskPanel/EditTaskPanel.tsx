@@ -1,10 +1,10 @@
-import * as React from 'react'
-import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button'
+import { DefaultButton, PrimaryButton, TextField } from '@fluentui/react'
 import { Panel } from '@fluentui/react/lib/Panel'
+import * as React from 'react'
 import { Task } from '../../models/Task'
-import { TextField } from '@fluentui/react'
 import { useAppDispatch } from '../../redux/hooks'
-import { deleteTask, updateTask } from '../../redux/slices/tasksSlice'
+import { thunkDeleteTask, thunkUpdateTask } from '../../redux/slices/tasksSlice'
+import styles from './EditTaskPanel.module.css'
 
 const buttonStyles = { root: { marginRight: 8 } }
 
@@ -24,17 +24,11 @@ export const EditTaskPanel = (props: IEditTaskPanelProps) => {
     // This panel doesn't actually save anything; the buttons are just an example of what
     // someone might want to render in a panel footer.
     const onRenderFooterContent = () => (
-        <div
-            style={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-evenly',
-            }}
-        >
+        <div className={styles.buttonGroup}>
             {/* Delete button */}
             <DefaultButton
                 text="Delete"
-                onClick={() => dispatch(deleteTask(props.task.id))}
+                onClick={() => dispatch(thunkDeleteTask(props.task.id))}
                 style={{
                     backgroundColor: '#de383b',
                     color: 'white',
@@ -44,12 +38,12 @@ export const EditTaskPanel = (props: IEditTaskPanelProps) => {
             <PrimaryButton
                 text="Save"
                 onClick={() => {
-                    dispatch(updateTask({ ...props.task, title }))
+                    dispatch(
+                        thunkUpdateTask(props.task.id, { ...props.task, title })
+                    )
                     props.onDismiss()
                 }}
                 allowDisabledFocus
-                // disabled={disabled}
-                // checked={checked}
             />
         </div>
     )
@@ -65,9 +59,7 @@ export const EditTaskPanel = (props: IEditTaskPanelProps) => {
             // at the bottom of the page
             isFooterAtBottom={true}
         >
-            <p>{title}</p>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <div className={styles.form}>
                 {/* Username */}
                 <TextField
                     label="Title"

@@ -9,3 +9,4 @@
 7. Unit tests
 8. Make it responsive
 9. Right click menu for delete
+10. Clean up references to 'Todo' in backend

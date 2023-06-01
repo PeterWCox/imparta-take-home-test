@@ -1,7 +1,8 @@
 import { IIconProps, TextField } from '@fluentui/react'
 import { useCallback, useState } from 'react'
 import { useAppDispatch } from '../../redux/hooks'
-import { addTask } from '../../redux/slices/tasksSlice'
+import { thunkAddTask } from '../../redux/slices/tasksSlice'
+import styles from './AddTask.module.css'
 
 export const AddTask = () => {
     //States
@@ -24,7 +25,7 @@ export const AddTask = () => {
     const onTaskNameKeyDown = useCallback(
         (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
             if (e.key === 'Enter' && taskName?.trim() !== '') {
-                dispatch(addTask(taskName))
+                dispatch(thunkAddTask(taskName))
                 setTaskName('')
             }
         },
@@ -32,13 +33,7 @@ export const AddTask = () => {
     )
 
     return (
-        <div
-            style={{
-                margin: '0 auto',
-                width: '100%',
-                maxWidth: '600px',
-            }}
-        >
+        <div className={styles.AddTask}>
             <TextField
                 value={taskName}
                 iconProps={iconProps}

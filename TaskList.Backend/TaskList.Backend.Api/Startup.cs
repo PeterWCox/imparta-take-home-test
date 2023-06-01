@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Text;
 using TaskList.Backend.Api.Authentication;
 using TaskList.Backend.Api.Models;
@@ -59,17 +60,28 @@ public class Startup
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
             };
         });
+        
+        //If development mode
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(builder =>
+            {
+                builder
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost");
+            });
 
-        services.AddCors();
+        });
+
+
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-        app.UseCors(options =>
-        options.WithOrigins("http://localhost:4200")
-        .AllowAnyMethod()
-        .AllowAnyHeader());
+        app.UseCors();
+
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
