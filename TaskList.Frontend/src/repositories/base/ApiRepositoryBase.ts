@@ -3,25 +3,40 @@ import axios from 'axios'
 export class ApiRepository<T> {
     //Private members
     private _baseUrl: string = ''
+    private _token: string = ''
     private _fullUrl = (path: string) => `${this._baseUrl}${path}`
 
-    constructor(baseUrl: string) {
+    constructor(baseUrl: string, token: string) {
         this._baseUrl = baseUrl
+        this._token = token
     }
 
-    public async get(url: string): Promise<T> {
+    public async get(url: string): Promise<T[]> {
         const fullUrl = this._fullUrl(url)
 
         //Convert the request to axios equivelant
-        const response = await axios.get<T>(fullUrl)
+        const response = await axios.get<T[]>(fullUrl, {
+            headers: {
+                Authorization: `Bearer ${this._token}`,
+                Accept: 'application/json',
+                ContentType: 'application/json',
+            },
+        })
+
         return response.data
     }
 
-    public async post(url: string, body: any): Promise<T> {
+    public async add(url: string, body: any): Promise<T> {
         const fullUrl = this._fullUrl(url)
 
         //Convert the request to axios equivelant
-        const response = await axios.post<T>(fullUrl, body)
+        const response = await axios.post<T>(fullUrl, body, {
+            headers: {
+                Authorization: `Bearer ${this._token}`,
+                Accept: 'application/json',
+                ContentType: 'application/json',
+            },
+        })
         return response.data
     }
 
@@ -29,7 +44,13 @@ export class ApiRepository<T> {
         const fullUrl = this._fullUrl(url)
 
         //Convert the request to axios equivelant
-        const response = await axios.put<T>(fullUrl, body)
+        const response = await axios.put<T>(fullUrl, body, {
+            headers: {
+                Authorization: `Bearer ${this._token}`,
+                Accept: 'application/json',
+                ContentType: 'application/json',
+            },
+        })
         return response.data
     }
 
@@ -37,14 +58,13 @@ export class ApiRepository<T> {
         const fullUrl = this._fullUrl(url)
 
         //Convert the request to axios equivelant
-        const response = await axios.delete<T>(fullUrl)
+        const response = await axios.delete<T>(fullUrl, {
+            headers: {
+                Authorization: `Bearer ${this._token}`,
+                Accept: 'application/json',
+                ContentType: 'application/json',
+            },
+        })
         return response.data
-    }
-
-    private getHeaders(): Headers {
-        const headers = new Headers()
-        headers.append('Content-Type', 'application/json')
-        headers.append('Accept', 'application/json')
-        return headers
     }
 }
