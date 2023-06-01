@@ -1,8 +1,6 @@
-﻿namespace TaskList.Backend.Api.Authentication
+﻿namespace TaskList.Backend.Api.Authentication;
+public class Response
 {
-    public class Response
-    {
-        public string Status { get; set; }
-        public string Message { get; set; }
-    }
+    public string Status { get; set; }
+    public string Message { get; set; }
 }

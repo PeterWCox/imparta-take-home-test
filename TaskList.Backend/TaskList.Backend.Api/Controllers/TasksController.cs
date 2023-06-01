@@ -6,100 +6,99 @@ using System.Linq;
 using System.Threading.Tasks;
 using TaskList.Backend.Api.Models;
 
-namespace TaskList.Backend.Api.Controllers
+namespace TaskList.Backend.Api.Controllers;
+
+[Authorize]
+[Route("api/[controller]")]
+[ApiController]
+public class TasksController : ControllerBase
 {
-    [Authorize]
-    [Route("api/[controller]")]
-    [ApiController]
-    public class TasksController : ControllerBase
+    private readonly ApplicationDbContext _context;
+
+    public TasksController(ApplicationDbContext context)
     {
-        private readonly ApplicationDbContext _context;
+        _context = context;
+    }
 
-        public TasksController(ApplicationDbContext context)
+    // GET: api/Tasks
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<TaskModel>>> GetTasks()
+    {
+        return await _context.Tasks.ToListAsync();
+    }
+
+    // GET: api/Tasks/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<TaskModel>> GetTask(int id)
+    {
+        var toDoItemModel = await _context.Tasks.FindAsync(id);
+
+        if (toDoItemModel == null)
         {
-            _context = context;
+            return NotFound();
         }
 
-        // GET: api/Tasks
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<TaskModel>>> GetTasks()
+        return toDoItemModel;
+    }
+
+    // PUT: api/Tasks/5
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateTask(int id, TaskModel toDoItemModel)
+    {
+        if (id != toDoItemModel.Id)
         {
-            return await _context.Tasks.ToListAsync();
+            return BadRequest();
         }
 
-        // GET: api/Tasks/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<TaskModel>> GetTask(int id)
-        {
-            var toDoItemModel = await _context.Tasks.FindAsync(id);
+        _context.Entry(toDoItemModel).State = EntityState.Modified;
 
-            if (toDoItemModel == null)
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!ToDoItemModelExists(id))
             {
                 return NotFound();
             }
-
-            return toDoItemModel;
-        }
-
-        // PUT: api/Tasks/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTask(int id, TaskModel toDoItemModel)
-        {
-            if (id != toDoItemModel.Id)
+            else
             {
-                return BadRequest();
+                throw;
             }
-
-            _context.Entry(toDoItemModel).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ToDoItemModelExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
         }
 
-        // POST: api/Task
-        [HttpPost]
-        public async Task<ActionResult<TaskModel>> CreateTask(TaskModel toDoItemModel)
+        return NoContent();
+    }
+
+    // POST: api/Task
+    [HttpPost]
+    public async Task<ActionResult<TaskModel>> CreateTask(TaskModel toDoItemModel)
+    {
+        _context.Tasks.Add(toDoItemModel);
+        await _context.SaveChangesAsync();
+
+        return CreatedAtAction("CreateTask", new { id = toDoItemModel.Id }, toDoItemModel);
+    }
+
+    // DELETE: api/Task/5
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteTask(int id)
+    {
+        var toDoItemModel = await _context.Tasks.FindAsync(id);
+        if (toDoItemModel == null)
         {
-            _context.Tasks.Add(toDoItemModel);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetToDoItemModel", new { id = toDoItemModel.Id }, toDoItemModel);
+            return NotFound();
         }
 
-        // DELETE: api/Task/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTask(int id)
-        {
-            var toDoItemModel = await _context.Tasks.FindAsync(id);
-            if (toDoItemModel == null)
-            {
-                return NotFound();
-            }
+        _context.Tasks.Remove(toDoItemModel);
+        await _context.SaveChangesAsync();
 
-            _context.Tasks.Remove(toDoItemModel);
-            await _context.SaveChangesAsync();
+        return NoContent();
+    }
 
-            return NoContent();
-        }
-
-        private bool ToDoItemModelExists(int id)
-        {
-            return _context.Tasks.Any(e => e.Id == id);
-        }
+    private bool ToDoItemModelExists(int id)
+    {
+        return _context.Tasks.Any(e => e.Id == id);
     }
 }

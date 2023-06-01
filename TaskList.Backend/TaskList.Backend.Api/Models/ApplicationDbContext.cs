@@ -2,35 +2,34 @@
 using Microsoft.EntityFrameworkCore;
 using TaskList.Backend.Api.Authentication;
 
-namespace TaskList.Backend.Api.Models
+namespace TaskList.Backend.Api.Models;
+
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+
+    }
+
+    public DbSet<TaskModel> Tasks { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        builder.Entity<TaskModel>(entity =>
         {
+            entity.Property(e => e.Title)
+            .IsRequired()
+            .HasMaxLength(100);
 
-        }
+            entity.Property(e => e.IsDone)
+            .IsRequired()
+            .HasMaxLength(1);
 
-        public DbSet<TaskModel> Tasks { get; set; }
+            entity.Property(e => e.Status)
+             .IsRequired();
 
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            builder.Entity<TaskModel>(entity =>
-            {
-                entity.Property(e => e.Title)
-                .IsRequired()
-                .HasMaxLength(100);
+        });
 
-                entity.Property(e => e.IsDone)
-                .IsRequired()
-                .HasMaxLength(1);
-
-                entity.Property(e => e.Status)
-                 .IsRequired();
-
-            });
-
-            base.OnModelCreating(builder);
-        }
+        base.OnModelCreating(builder);
     }
 }

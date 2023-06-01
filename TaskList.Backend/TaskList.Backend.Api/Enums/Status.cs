@@ -1,9 +1,7 @@
-﻿namespace TaskList.Backend.Api.Enums
+﻿namespace TaskList.Backend.Api.Enums;
+public enum TaskStatus
 {
-    public enum TaskStatus
-    {
-        Pending = 0,
-        InProgress = 1,
-        Completed = 2
-    }
+    Pending = 0,
+    InProgress = 1,
+    Completed = 2
 }
