@@ -18,4 +18,8 @@ export class TokenRepository_Cookie implements ITokenRepository {
     public setToken = (token: string): void => {
         document.cookie = `${this._cookieKey}=${token}`
     }
+
+    public deleteToken = (): void => {
+        document.cookie = `${this._cookieKey}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
+    }
 }

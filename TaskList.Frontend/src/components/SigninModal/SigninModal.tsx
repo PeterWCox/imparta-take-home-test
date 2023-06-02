@@ -1,15 +1,22 @@
 import { MessageBar, MessageBarType, TextField } from '@fluentui/react'
 import { PrimaryButton } from '@fluentui/react/lib/Button'
+import { useMutation } from '@tanstack/react-query'
+import axios, { AxiosError } from 'axios'
 import { useState } from 'react'
 import { ModalWrapper } from '../../lib/ModalWrapper/ModalWrapper'
-import { useAppDispatch, useAppSelector } from '../../redux/hooks'
-import { thunkLogin } from '../../redux/slices/authSlice'
-import { thunkGetTasks } from '../../redux/slices/tasksSlice'
+import { LoginRequest } from '../../models/User'
+import { useAppDispatch } from '../../redux/hooks'
+import { setToken } from '../../redux/slices/authSlice'
 import styles from './SigninModal.module.css'
 
 export interface ISigninModalProps {
     isModalOpen: boolean
     hideModal: () => void
+}
+
+export interface ILoginRequest {
+    username: string
+    password: string
 }
 
 export const SigninModal = (props: ISigninModalProps) => {
@@ -19,8 +26,6 @@ export const SigninModal = (props: ISigninModalProps) => {
 
     //Hooks
     const dispatch = useAppDispatch()
-    const { error } = useAppSelector((state) => state.tasks)
-    const { token } = useAppSelector((state) => state.auth)
 
     //Handlers
     const handleUsernameChange = (_: any, newValue?: string) => {
@@ -30,18 +35,36 @@ export const SigninModal = (props: ISigninModalProps) => {
         setPassword(newValue || '')
     }
 
-    const handleSigninButtonClick = () => {
-        dispatch(
-            thunkLogin({
-                username,
-                password,
-            })
-        )
-        if (!error) {
-            dispatch(thunkGetTasks(token!))
-            props.hideModal()
-        }
-    }
+    //Mutations
+    const { mutateAsync: login, error } = useMutation([username, password], {
+        mutationFn: async (loginRequest: LoginRequest) => {
+            try {
+                const response = await axios.post(
+                    `http://localhost:24288/api/Authentication/Login`,
+                    loginRequest
+                )
+
+                //Set token if successful
+                if (response.data?.token) {
+                    dispatch(setToken(response.data.token))
+                    props.hideModal()
+                }
+            } catch (error) {
+                const errors = error as AxiosError
+
+                if (errors?.response?.status === 401) {
+                    throw new Error('Invalid username or password')
+                }
+
+                throw new Error('An unknown error has occured')
+            }
+        },
+    })
+
+    console.log(error)
+
+    //@ts-ignore
+    const errorMessage = error?.message
 
     return (
         <ModalWrapper
@@ -64,7 +87,7 @@ export const SigninModal = (props: ISigninModalProps) => {
             {/* Error message */}
             {error ? (
                 <MessageBar messageBarType={MessageBarType.error}>
-                    {error}
+                    {errorMessage}
                 </MessageBar>
             ) : null}
 
@@ -73,7 +96,7 @@ export const SigninModal = (props: ISigninModalProps) => {
                 {/* Signin Button */}
                 <PrimaryButton
                     text="Signin"
-                    onClick={handleSigninButtonClick}
+                    onClick={() => login({ username, password })}
                     allowDisabledFocus
                 />
             </div>

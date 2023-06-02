@@ -1,7 +1,6 @@
 import { Text } from '@fluentui/react'
 import { useState } from 'react'
 import { Status, Task } from '../../models/Task'
-import { useAppSelector } from '../../redux/hooks'
 import { ShowCompletedTasks } from '../ShowCompletedTasks/ShowCompletedTasks'
 import { TaskList } from '../TaskList/TaskList'
 import styles from './TaskColumn.module.css'
@@ -16,8 +15,8 @@ export const TaskColumn = (props: ITaskColumnProps) => {
     const [showCompletedTasks, setShowCompletedTasks] = useState(true)
 
     //Hooks
-    const tasksByStatus = useAppSelector((state) =>
-        state.tasks.tasks.filter((t: any) => t.status === props.status)
+    const tasksByStatus = props.tasks.filter(
+        (t: any) => t.status === props.status
     )
     const incompleteTasks = tasksByStatus.filter((t: Task) => !t.isDone) || []
     const completedTasks = tasksByStatus.filter((t: Task) => t.isDone) || []

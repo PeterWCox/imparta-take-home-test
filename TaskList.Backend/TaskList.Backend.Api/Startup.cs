@@ -31,7 +31,8 @@ public class Startup
         services.AddControllers();
         services.AddSwaggerGen(c =>
         {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "ToDoAPI", Version = "v1" });
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "TaskAPI", Version = "v1" });
+
         });
 
         services.AddDbContext<ApplicationDbContext>(options =>
@@ -60,7 +61,7 @@ public class Startup
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
             };
         });
-        
+
         //If development mode
         services.AddCors(options =>
         {
@@ -86,7 +87,7 @@ public class Startup
         {
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ToDoAPI v1"));
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TaskAPI v1"));
         }
 
         app.UseAuthentication();

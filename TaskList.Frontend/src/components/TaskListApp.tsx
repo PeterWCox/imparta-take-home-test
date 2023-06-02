@@ -6,13 +6,15 @@ import {
     SearchBox,
     Text,
 } from '@fluentui/react'
+import { useQuery } from '@tanstack/react-query'
+import axios, { AxiosError } from 'axios'
 import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../redux/hooks'
-import { thunkGetTasks } from '../redux/slices/tasksSlice'
+import { logout, setToken, setUser } from '../redux/slices/authSlice'
 import { RootState } from '../redux/store'
-import { UserUtils } from '../utils/UserUtils'
+import { TokenRepository_Cookie } from '../repositories/TokenRepository'
 import { AddTask } from './AddTask/AddTask'
-import { RegisterModal } from './Register/Register'
+import { RegisterModal } from './RegisterModal/RegisterModal'
 import { SigninModal } from './SigninModal/SigninModal'
 import { TaskColumn } from './TaskColumn/TaskColumn'
 import styles from './TaskListApp.module.css'
@@ -22,17 +24,89 @@ export const TaskListApp = () => {
     const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false)
     const [isSigninModalOpen, setIsSigninModalOpen] = useState(false)
 
-    //Hooks
+    //Redux
     const dispatch = useAppDispatch()
-    const { isLoading, error, user, tasks } = useAppSelector(
-        (state: RootState) => state.tasks
-    )
+    const { token, user } = useAppSelector((state: RootState) => state.auth)
+
+    useEffect(() => {
+        //On init - Try and get cached token
+        const token = new TokenRepository_Cookie().getToken()
+
+        if (!token) {
+            return
+        }
+
+        dispatch(setToken(token))
+    }, [])
+
+    //Queries
+    const { data: tasks } = useQuery({
+        queryKey: [token],
+        queryFn: async () => {
+            try {
+                const response = await axios.get(
+                    `http://localhost:24288/api/Tasks`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                )
+
+                if (response.data) {
+                    dispatch(setUser(response.data))
+                }
+
+                return response.data
+            } catch (error) {
+                const errors = error as AxiosError
+                console.log(errors)
+
+                if (errors?.response?.status === 401) {
+                    throw new Error('Invalid username or password')
+                }
+
+                throw new Error('An unknown error has occured')
+            }
+        },
+        enabled: !!token,
+    })
+
+    const { isLoading: isUserLoading } = useQuery({
+        queryKey: [token, 'tasks'],
+        queryFn: async () => {
+            try {
+                const response = await axios.get(
+                    `http://localhost:24288/api/Authentication/me`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                )
+
+                if (response.data) {
+                    dispatch(setUser(response.data))
+                }
+
+                return response.data
+            } catch (error) {
+                const errors = error as AxiosError
+                console.log(errors)
+
+                if (errors?.response?.status === 401) {
+                    throw new Error('Invalid username or password')
+                }
+
+                throw new Error('An unknown error has occured')
+            }
+        },
+        enabled: !!token,
+    })
+
+    // const isLoading = isAuthLoading || isTasksLoading || isUserLoading
 
     //Effects
-    useEffect(() => {
-        //Get tasks from API
-        dispatch(thunkGetTasks())
-    }, [])
 
     //Handlers
     const handleSigninButtonClick = () => {
@@ -41,7 +115,9 @@ export const TaskListApp = () => {
     const handleRegisterButtonClick = () => {
         setIsRegisterModalOpen(true)
     }
-
+    const handleSignoutButtonClick = () => {
+        dispatch(logout())
+    }
     const handleSignInModalClose = () => {
         setIsSigninModalOpen(false)
     }
@@ -49,7 +125,7 @@ export const TaskListApp = () => {
         setIsRegisterModalOpen(false)
     }
 
-    console.log(error)
+    console.log(user?.username)
 
     return (
         <>
@@ -81,24 +157,30 @@ export const TaskListApp = () => {
                             />
                         ) : null}
 
-                        {/* Signin Button */}
+                        {/* Persona */}
+                        {user ? (
+                            <Persona
+                                // imageInitials={UserUtils.getInitials(user.name)}
+                                text={user.email}
+                                secondaryText={user.username}
+                                // tertiaryText={user.email}
+                                size={PersonaSize.size72}
+                                // imageAlt={user.name}
+                            />
+                        ) : null}
+
+                        {/* Signin/Signout Button */}
                         {!user ? (
                             <DefaultButton
                                 text="Sign in"
                                 onClick={handleSigninButtonClick}
                             />
-                        ) : null}
-
-                        {/* Persona */}
-                        {user ? (
-                            <Persona
-                                imageInitials={UserUtils.getInitials(user.name)}
-                                text={user.name}
-                                secondaryText={user.email}
-                                size={PersonaSize.size56}
-                                imageAlt={user.name}
+                        ) : (
+                            <DefaultButton
+                                text="Sign out"
+                                onClick={handleSignoutButtonClick}
                             />
-                        ) : null}
+                        )}
 
                         {/* Searchbox */}
                         <div>

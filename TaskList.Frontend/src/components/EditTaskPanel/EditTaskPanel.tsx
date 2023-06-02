@@ -2,8 +2,7 @@ import { DefaultButton, PrimaryButton, TextField } from '@fluentui/react'
 import { Panel } from '@fluentui/react/lib/Panel'
 import * as React from 'react'
 import { Task } from '../../models/Task'
-import { useAppDispatch } from '../../redux/hooks'
-import { thunkDeleteTask, thunkUpdateTask } from '../../redux/slices/tasksSlice'
+// import { thunkDeleteTask, thunkUpdateTask } from '../../redux/slices/tasksSlice'
 import styles from './EditTaskPanel.module.css'
 
 const buttonStyles = { root: { marginRight: 8 } }
@@ -19,7 +18,7 @@ export const EditTaskPanel = (props: IEditTaskPanelProps) => {
     const [title, setTitle] = React.useState(props.task.title)
 
     //Hooks
-    const dispatch = useAppDispatch()
+    // const dispatch = useAppDispatch()
 
     // This panel doesn't actually save anything; the buttons are just an example of what
     // someone might want to render in a panel footer.
@@ -28,7 +27,7 @@ export const EditTaskPanel = (props: IEditTaskPanelProps) => {
             {/* Delete button */}
             <DefaultButton
                 text="Delete"
-                onClick={() => dispatch(thunkDeleteTask(props.task.id))}
+                // onClick={() => dispatch(thunkDeleteTask(props.task.id))}
                 style={{
                     backgroundColor: '#de383b',
                     color: 'white',
@@ -38,9 +37,9 @@ export const EditTaskPanel = (props: IEditTaskPanelProps) => {
             <PrimaryButton
                 text="Save"
                 onClick={() => {
-                    dispatch(
-                        thunkUpdateTask(props.task.id, { ...props.task, title })
-                    )
+                    // dispatch(
+                    //     thunkUpdateTask(props.task.id, { ...props.task, title })
+                    // )
                     props.onDismiss()
                 }}
                 allowDisabledFocus

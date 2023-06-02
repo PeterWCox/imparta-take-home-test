@@ -1,19 +1,19 @@
 import { Task } from '../models/Task'
 import { ApiRepository } from './base/ApiRepositoryBase'
 
-export interface ITaskRepository {
+export interface ITasksRepository {
     getTasks(): Promise<Task[]>
     addTask(title: string): Promise<Task>
     updateTask(id: number, task: Task): Promise<void>
     deleteTask(id: number): Promise<void>
 }
 
-export class TaskRepositoryApi
+export class TasksRepositoryApi
     extends ApiRepository<Task>
-    implements ITaskRepository
+    implements ITasksRepository
 {
-    constructor(baseUrl: string, token: string) {
-        super(baseUrl, token)
+    constructor(token: string) {
+        super(token)
     }
 
     public getTasks = async (): Promise<Task[]> => {

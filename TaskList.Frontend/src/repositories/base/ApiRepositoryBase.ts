@@ -1,13 +1,13 @@
 import axios from 'axios'
+import { Constants } from '../../utils/Constants'
 
 export class ApiRepository<T> {
     //Private members
-    private _baseUrl: string = ''
-    private _fullUrl = (path: string) => `${this._baseUrl}${path}`
+    private _fullUrl = (path: string) => `${Constants.BASE_URL}/${path}`
     private _config: any = {}
 
-    constructor(baseUrl: string, token: string) {
-        this._baseUrl = baseUrl
+    //Constructor
+    constructor(token: string) {
         this._config = {
             headers: {
                 Authorization: `Bearer ${token}`,

@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using NuGet.Common;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,6 +29,44 @@ public class AuthenticationController : ControllerBase
         this.userManager = userManager;
         this.roleManager = roleManager;
         _configuration = configuration;
+    }
+
+    [HttpGet]
+    [Route("me")]
+    public async Task<IActionResult> Me()
+    {
+        //Get bearer token from Headers as a string 
+        var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+        //Decode token to get the claims
+        var handler = new JwtSecurityTokenHandler();
+        var decodedToken = handler.ReadJwtToken(token);
+        if (decodedToken == null)
+        {
+            return Unauthorized();
+        }
+
+        //Get the email claim
+        var claims = decodedToken.Claims.ToList();
+        var name = claims[0].Value;
+        var user = await userManager.FindByNameAsync(name);
+        var userResponse = new UserResponse
+        {
+            Id = user.Id,
+            Username = user.UserName,
+            Email = user.Email
+        };
+
+        return Ok(userResponse);
+
+
+    }
+
+    public class UserResponse
+    {
+        public string Id { get; set; }
+        public string Username { get; set; }
+        public string Email { get; set; }
     }
 
 
@@ -60,7 +100,7 @@ public class AuthenticationController : ControllerBase
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );
-
+            
             return Ok(new
             {
                 token = new JwtSecurityTokenHandler().WriteToken(token),
@@ -74,7 +114,7 @@ public class AuthenticationController : ControllerBase
     [Route("register")]
     public async Task<IActionResult> Register([FromBody] RegisterModel model)
     {
-        var userExists = await userManager.FindByNameAsync(model.Username);
+        ApplicationUser userExists = await userManager.FindByNameAsync(model.Username);
 
         if (userExists != null)
         {
