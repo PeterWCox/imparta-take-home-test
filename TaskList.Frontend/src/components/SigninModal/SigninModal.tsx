@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import useSignin from '../../hooks/user/useSignin'
 import { ModalWrapper } from '../../lib/ModalWrapper/ModalWrapper'
-import { useAppSelector } from '../../redux/hooks'
 import styles from './SigninModal.module.css'
 
 export interface ISigninModalProps {
@@ -17,9 +16,12 @@ export const SigninModal = (props: ISigninModalProps) => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
-    //Hooks
-    const { user } = useAppSelector((state) => state.auth)
-    const { handleSubmit, control } = useForm()
+    //React-Hook-Form
+    const {
+        handleSubmit,
+        control,
+        formState: { errors },
+    } = useForm()
     const [signin, error] = useSignin({
         username,
         password,
@@ -36,24 +38,28 @@ export const SigninModal = (props: ISigninModalProps) => {
         >
             <form
                 onSubmit={handleSubmit((data) => {
+                    console.log(data)
+                    console.log(errors)
                     setUsername(data.Username)
                     setPassword(data.Password)
                     signin()
-                    if (user) {
-                        props.hideModal()
-                    }
                 })}
             >
                 {/* Username */}
                 <Controller
                     control={control}
                     name="Username"
+                    rules={{ required: true }}
                     render={({ field: { onChange, onBlur, value } }) => (
                         <TextField
+                            id="Username"
                             label="Username"
                             onChange={onChange}
                             onBlur={onBlur}
                             value={value}
+                            errorMessage={
+                                errors.Username && 'Username is required'
+                            }
                         />
                     )}
                 />
@@ -64,17 +70,21 @@ export const SigninModal = (props: ISigninModalProps) => {
                     name="Password"
                     render={({ field: { onChange, onBlur, value } }) => (
                         <TextField
+                            id="Password"
                             label="Password"
                             onChange={onChange}
                             onBlur={onBlur}
                             value={value}
+                            errorMessage={
+                                errors.Password && 'Password is required'
+                            }
                         />
                     )}
                 />
 
                 {/* Error message */}
                 {error ? (
-                    <MessageBar messageBarType={MessageBarType.error}>
+                    <MessageBar messageBarType={MessageBarType.info}>
                         {errorMessage}
                     </MessageBar>
                 ) : null}
