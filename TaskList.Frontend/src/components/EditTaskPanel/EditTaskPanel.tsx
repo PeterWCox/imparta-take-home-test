@@ -1,11 +1,10 @@
 import { DefaultButton, PrimaryButton, TextField } from '@fluentui/react'
 import { Panel } from '@fluentui/react/lib/Panel'
 import * as React from 'react'
+import useEditTask from '../../hooks/tasks/useEditTask'
+import useRemoveTask from '../../hooks/tasks/useRemoveTask'
 import { Task } from '../../models/Task'
-// import { thunkDeleteTask, thunkUpdateTask } from '../../redux/slices/tasksSlice'
 import styles from './EditTaskPanel.module.css'
-
-const buttonStyles = { root: { marginRight: 8 } }
 
 export interface IEditTaskPanelProps {
     task: Task
@@ -15,34 +14,35 @@ export interface IEditTaskPanelProps {
 
 export const EditTaskPanel = (props: IEditTaskPanelProps) => {
     //States
-    const [title, setTitle] = React.useState(props.task.title)
+    const [updatedTask, setUpdatedTask] = React.useState(props.task)
 
     //Hooks
-    // const dispatch = useAppDispatch()
+    const [editTask] = useEditTask(updatedTask)
+    const [removeTask] = useRemoveTask(props.task.id)
 
-    // This panel doesn't actually save anything; the buttons are just an example of what
-    // someone might want to render in a panel footer.
     const onRenderFooterContent = () => (
         <div className={styles.buttonGroup}>
             {/* Delete button */}
             <DefaultButton
                 text="Delete"
-                // onClick={() => dispatch(thunkDeleteTask(props.task.id))}
+                onClick={() => {
+                    removeTask()
+                    props.onDismiss()
+                }}
                 style={{
                     backgroundColor: '#de383b',
+                    borderColor: '#de383b',
                     color: 'white',
                 }}
             />
 
+            {/* Save button */}
             <PrimaryButton
                 text="Save"
                 onClick={() => {
-                    // dispatch(
-                    //     thunkUpdateTask(props.task.id, { ...props.task, title })
-                    // )
+                    editTask()
                     props.onDismiss()
                 }}
-                allowDisabledFocus
             />
         </div>
     )
@@ -51,23 +51,32 @@ export const EditTaskPanel = (props: IEditTaskPanelProps) => {
         <Panel
             isOpen={props.isOpen}
             onDismiss={props.onDismiss}
-            // headerText="Panel with footer at bottom"
+            headerText="Edit Panel"
             closeButtonAriaLabel="Close"
             onRenderFooterContent={onRenderFooterContent}
-            // Stretch panel content to fill the available height so the footer is positioned
-            // at the bottom of the page
             isFooterAtBottom={true}
         >
             <div className={styles.form}>
-                {/* Username */}
+                {/* Title */}
                 <TextField
                     label="Title"
-                    value={title}
-                    onChange={(e, newValue) => {
-                        setTitle(newValue ?? '')
+                    value={updatedTask.title}
+                    onChange={(_, newValue) => {
+                        setUpdatedTask({
+                            ...updatedTask,
+                            title: newValue ?? '',
+                        })
+                    }}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' && updatedTask.title.length > 0) {
+                            editTask()
+                            props.onDismiss()
+                        }
                     }}
                     errorMessage={
-                        title.length === 0 ? 'Title cannot be empty' : ''
+                        updatedTask.title.length === 0
+                            ? 'Title cannot be empty'
+                            : ''
                     }
                 />
             </div>

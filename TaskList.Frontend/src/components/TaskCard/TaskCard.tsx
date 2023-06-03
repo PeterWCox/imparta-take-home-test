@@ -1,12 +1,10 @@
 import { Icon, Text } from '@fluentui/react'
-import { useCallback, useState } from 'react'
-import { Task } from '../../models/Task'
-import { useAppDispatch } from '../../redux/hooks'
-import styles from './TaskCard.module.css'
-// import { updateTask } from '../../redux/slices/tasksSlice'
 import { useBoolean } from '@fluentui/react-hooks'
-// import { thunkUpdateTask } from '../../redux/slices/tasksSlice'
+import { useCallback, useState } from 'react'
+import useEditTask from '../../hooks/tasks/useEditTask'
+import { Task } from '../../models/Task'
 import { EditTaskPanel } from '../EditTaskPanel/EditTaskPanel'
+import styles from './TaskCard.module.css'
 
 export interface ITaskCardProps {
     task: Task
@@ -14,25 +12,30 @@ export interface ITaskCardProps {
 
 export const TaskCard = (props: ITaskCardProps) => {
     //States
-    const [showEditPanel, setShowEditPanel] = useState(false)
     const [isOpen, { setTrue: openPanel, setFalse: dismissPanel }] =
         useBoolean(false)
+    const [updatedTodo, setUpdatedTodo] = useState<Task>(props.task)
 
-    //Hooks
-    const dispatch = useAppDispatch()
+    const [edit] = useEditTask(updatedTodo)
 
     //Handlers
     const onCheckboxClick = useCallback(() => {
-        // dispatch(
-        //     thunkUpdateTask(props.task.id, {
-        //         ...props.task,
-        //         isDone: !props.task.isDone,
-        //     })
-        // )
+        setUpdatedTodo({
+            ...props.task,
+            isDone: !props.task.isDone,
+        })
+        edit()
     }, [props.task])
 
     return (
         <>
+            {/* Edit Panel */}
+            <EditTaskPanel
+                task={props.task}
+                isOpen={isOpen}
+                onDismiss={dismissPanel}
+            />
+            {/* Task Card */}
             <li className={styles.task}>
                 {/* Checkbox */}
                 <div className={styles.icon} onClick={onCheckboxClick}>
@@ -54,13 +57,6 @@ export const TaskCard = (props: ITaskCardProps) => {
                     <Text>{props.task.title}</Text>
                 </div>
             </li>
-
-            {/* Edit Panel */}
-            <EditTaskPanel
-                task={props.task}
-                isOpen={isOpen}
-                onDismiss={dismissPanel}
-            />
         </>
     )
 }

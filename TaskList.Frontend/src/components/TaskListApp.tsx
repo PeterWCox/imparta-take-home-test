@@ -6,11 +6,12 @@ import {
     SearchBox,
     Text,
 } from '@fluentui/react'
-import { useQuery } from '@tanstack/react-query'
-import axios, { AxiosError } from 'axios'
 import { useEffect, useState } from 'react'
+import useTasks from '../hooks/tasks/useTasks'
+import useGetUser from '../hooks/user/useUser'
+import { Task } from '../models/Task'
 import { useAppDispatch, useAppSelector } from '../redux/hooks'
-import { logout, setToken, setUser } from '../redux/slices/authSlice'
+import { logout, setToken } from '../redux/slices/authSlice'
 import { RootState } from '../redux/store'
 import { TokenRepository_Cookie } from '../repositories/TokenRepository'
 import { AddTask } from './AddTask/AddTask'
@@ -40,73 +41,8 @@ export const TaskListApp = () => {
     }, [])
 
     //Queries
-    const { data: tasks } = useQuery({
-        queryKey: [token],
-        queryFn: async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:24288/api/Tasks`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                )
-
-                if (response.data) {
-                    dispatch(setUser(response.data))
-                }
-
-                return response.data
-            } catch (error) {
-                const errors = error as AxiosError
-                console.log(errors)
-
-                if (errors?.response?.status === 401) {
-                    throw new Error('Invalid username or password')
-                }
-
-                throw new Error('An unknown error has occured')
-            }
-        },
-        enabled: !!token,
-    })
-
-    const { isLoading: isUserLoading } = useQuery({
-        queryKey: [token, 'tasks'],
-        queryFn: async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:24288/api/Authentication/me`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                )
-
-                if (response.data) {
-                    dispatch(setUser(response.data))
-                }
-
-                return response.data
-            } catch (error) {
-                const errors = error as AxiosError
-                console.log(errors)
-
-                if (errors?.response?.status === 401) {
-                    throw new Error('Invalid username or password')
-                }
-
-                throw new Error('An unknown error has occured')
-            }
-        },
-        enabled: !!token,
-    })
-
-    // const isLoading = isAuthLoading || isTasksLoading || isUserLoading
-
-    //Effects
+    const [tasks] = useTasks()
+    const [userLoading] = useGetUser()
 
     //Handlers
     const handleSigninButtonClick = () => {
@@ -124,8 +60,6 @@ export const TaskListApp = () => {
     const handleRegisterModalClose = () => {
         setIsRegisterModalOpen(false)
     }
-
-    console.log(user?.username)
 
     return (
         <>
@@ -203,19 +137,25 @@ export const TaskListApp = () => {
                             <TaskColumn
                                 status={0}
                                 tasks={
-                                    tasks?.filter((t) => t.status === 0) ?? []
+                                    tasks?.filter(
+                                        (t: Task) => t.status === 0
+                                    ) ?? []
                                 }
                             />
                             <TaskColumn
                                 status={1}
                                 tasks={
-                                    tasks?.filter((t) => t.status === 1) ?? []
+                                    tasks?.filter(
+                                        (t: Task) => t.status === 1
+                                    ) ?? []
                                 }
                             />
                             <TaskColumn
                                 status={2}
                                 tasks={
-                                    tasks?.filter((t) => t.status === 2) ?? []
+                                    tasks?.filter(
+                                        (t: Task) => t.status === 2
+                                    ) ?? []
                                 }
                             />
                         </div>

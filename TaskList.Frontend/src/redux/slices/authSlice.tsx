@@ -27,7 +27,6 @@ export const authSlice = createSlice({
             new TokenRepository_Cookie().setToken(action.payload)
         },
         setUser: (state, action: PayloadAction<User>) => {
-            console.log(action.payload)
             state.user = action.payload
         },
         logout: (state) => {

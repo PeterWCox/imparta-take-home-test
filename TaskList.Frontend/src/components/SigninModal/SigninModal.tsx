@@ -36,7 +36,7 @@ export const SigninModal = (props: ISigninModalProps) => {
     }
 
     //Mutations
-    const { mutateAsync: login, error } = useMutation([username, password], {
+    const { mutateAsync: signin, error } = useMutation([username, password], {
         mutationFn: async (loginRequest: LoginRequest) => {
             try {
                 const response = await axios.post(
@@ -47,8 +47,9 @@ export const SigninModal = (props: ISigninModalProps) => {
                 //Set token if successful
                 if (response.data?.token) {
                     dispatch(setToken(response.data.token))
-                    props.hideModal()
                 }
+
+                props.hideModal()
             } catch (error) {
                 const errors = error as AxiosError
 
@@ -96,7 +97,7 @@ export const SigninModal = (props: ISigninModalProps) => {
                 {/* Signin Button */}
                 <PrimaryButton
                     text="Signin"
-                    onClick={() => login({ username, password })}
+                    onClick={() => signin({ username, password })}
                     allowDisabledFocus
                 />
             </div>
