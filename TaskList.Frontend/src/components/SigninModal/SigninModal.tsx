@@ -1,16 +1,24 @@
 import { MessageBar, MessageBarType, TextField } from '@fluentui/react'
 import { PrimaryButton } from '@fluentui/react/lib/Button'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { z } from 'zod'
 import useSignin from '../../hooks/user/useSignin'
-import { ModalWrapper } from '../../lib/ModalWrapper/ModalWrapper'
-import { ValidationUtils } from '../../utils/ValidationUtils'
+import { ModalForm } from '../../lib/ModalForm/ModalForm'
 import styles from './SigninModal.module.css'
 
 export interface ISigninModalProps {
     isModalOpen: boolean
     hideModal: () => void
 }
+
+const validationSchema = z.object({
+    Username: z.string().min(1, { message: 'Username is required' }),
+    Password: z.string().min(1, { message: 'Password is required' }),
+})
+
+type ValidationSchema = z.infer<typeof validationSchema>
 
 export const SigninModal = (props: ISigninModalProps) => {
     //States
@@ -22,7 +30,10 @@ export const SigninModal = (props: ISigninModalProps) => {
         handleSubmit,
         control,
         formState: { errors },
-    } = useForm()
+    } = useForm<ValidationSchema>({
+        resolver: zodResolver(validationSchema),
+    })
+
     const [signin, error] = useSignin({
         username,
         password,
@@ -32,80 +43,72 @@ export const SigninModal = (props: ISigninModalProps) => {
     const errorMessage = error?.message
 
     return (
-        <ModalWrapper
+        <ModalForm
             title={'Signin'}
             isModalOpen={props.isModalOpen}
             hideModal={props.hideModal}
+            onSubmit={handleSubmit((data) => {
+                setUsername(data.Username)
+                setPassword(data.Password)
+                signin()
+            })}
         >
-            <form
-                onSubmit={handleSubmit((data) => {
-                    setUsername(data.Username)
-                    setPassword(data.Password)
-                    signin()
-                })}
-            >
-                {/* Username */}
-                <Controller
-                    control={control}
-                    name="Username"
-                    rules={{ required: true }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                        <TextField
-                            id="Username"
-                            label="Username"
-                            onChange={onChange}
-                            onBlur={onBlur}
-                            value={value}
-                            errorMessage={
-                                errors.Username &&
-                                ValidationUtils.getValidationRequiredMessage(
-                                    'Username'
-                                )
-                            }
-                        />
-                    )}
-                />
-
-                {/* Password */}
-                <Controller
-                    control={control}
-                    name="Password"
-                    rules={{ required: true }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                        <TextField
-                            id="Password"
-                            label="Password"
-                            onChange={onChange}
-                            onBlur={onBlur}
-                            value={value}
-                            errorMessage={
-                                errors.Password &&
-                                ValidationUtils.getValidationRequiredMessage(
-                                    'Password'
-                                )
-                            }
-                        />
-                    )}
-                />
-
-                {/* Error message */}
-                {error ? (
-                    <MessageBar messageBarType={MessageBarType.info}>
-                        {errorMessage}
-                    </MessageBar>
-                ) : null}
-
-                {/* Button Group */}
-                <div className={styles.buttonGroup}>
-                    {/* Signin Button */}
-                    <PrimaryButton
-                        text="Signin"
-                        allowDisabledFocus
-                        type="submit"
-                        disabled={Object.keys(errors).length > 0}
+            {/* Username */}
+            <Controller
+                control={control}
+                name="Username"
+                render={({ field: { onChange, onBlur, value } }) => (
+                    <TextField
+                        id="Username"
+                        label="Username"
+                        onChange={onChange}
+                        onBlur={onBlur}
+                        value={value}
+                        errorMessage={
+                            errors.Username && errors.Username?.message
+                        }
                     />
-                </div>
-            </form>
-        </ModalWrapper>
+                )}
+            />
+
+            {/* Password */}
+            <Controller
+                control={control}
+                name="Password"
+                render={({ field: { onChange, onBlur, value } }) => (
+                    <TextField
+                        id="Password"
+                        label="Password"
+                        type="password"
+                        canRevealPassword
+                        revealPasswordAriaLabel="Show password"
+                        onChange={onChange}
+                        onBlur={onBlur}
+                        value={value}
+                        errorMessage={
+                            errors.Password && errors.Password?.message
+                        }
+                    />
+                )}
+            />
+
+            {/* Error message */}
+            {error ? (
+                <MessageBar messageBarType={MessageBarType.info}>
+                    {errorMessage}
+                </MessageBar>
+            ) : null}
+
+            {/* Button Group */}
+            <div className={styles.buttonGroup}>
+                {/* Signin Button */}
+                <PrimaryButton
+                    text="Signin"
+                    allowDisabledFocus
+                    type="submit"
+                    disabled={Object.keys(errors).length > 0}
+                />
+            </div>
+        </ModalForm>
     )
 }

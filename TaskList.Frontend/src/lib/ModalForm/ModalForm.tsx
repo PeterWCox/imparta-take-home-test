@@ -4,24 +4,24 @@ import {
     Modal,
     Text,
     getTheme,
-    mergeStyleSets,
 } from '@fluentui/react'
-import styles from './ModalWrapper.module.css'
+import styles from './ModalForm.module.css'
 
-export interface IModalWrapperProps {
+export interface IModalFormProps {
     title: string
     isModalOpen: boolean
     hideModal: () => void
+    onSubmit: () => void
     children: React.ReactNode
 }
 
-export const ModalWrapper = (props: IModalWrapperProps) => {
+export const ModalForm = (props: IModalFormProps) => {
     return (
         <Modal
             isOpen={props.isModalOpen}
             onDismiss={props.hideModal}
             isBlocking={false}
-            containerClassName={contentStyles.container}
+            containerClassName={styles.container}
         >
             {/* Modal Header */}
             <div className={styles.header}>
@@ -39,19 +39,14 @@ export const ModalWrapper = (props: IModalWrapperProps) => {
                 />
             </div>
 
-            <div className={styles.body}>{props.children}</div>
+            <form className={styles.body} onSubmit={props.onSubmit}>
+                {props.children}
+            </form>
         </Modal>
     )
 }
 
 const theme = getTheme()
-const contentStyles = mergeStyleSets({
-    container: {
-        display: 'flex',
-        flexFlow: 'column nowrap',
-        alignItems: 'stretch',
-    },
-})
 
 const iconButtonStyles: Partial<IButtonStyles> = {
     root: {
