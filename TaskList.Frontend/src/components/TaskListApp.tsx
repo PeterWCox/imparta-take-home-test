@@ -6,8 +6,8 @@ import {
     SearchBox,
     Text,
 } from '@fluentui/react'
-import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { StringParam, useQueryParam } from 'use-query-params'
 import useTasks from '../hooks/tasks/useTasks'
 import useGetUser from '../hooks/user/useUser'
@@ -35,7 +35,7 @@ export const TaskListApp = () => {
     const { user } = useAppSelector((state: RootState) => state.auth)
 
     //Hooks
-    const queryClient = useQueryClient()
+    const navigate = useNavigate()
 
     useEffect(() => {
         //On init - Try and get cached token
@@ -61,7 +61,7 @@ export const TaskListApp = () => {
     }
     const handleSignoutButtonClick = () => {
         dispatch(logout())
-        queryClient.invalidateQueries('tasks')
+        navigate(0)
     }
     const handleSignInModalClose = () => {
         setIsSigninModalOpen(false)

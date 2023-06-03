@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
 import { Task } from '../../models/Task'
 import { useAppSelector } from '../../redux/hooks'
+import { QueryClientUtils } from '../../utils/QueryClientUtils'
 
 const useEditTask = (task: Task) => {
     //Hooks
@@ -23,9 +24,9 @@ const useEditTask = (task: Task) => {
                             },
                         }
                     )
-                    queryClient.invalidateQueries({
-                        queryKey: ['tasks'],
-                    })
+                    queryClient.invalidateQueries([
+                        QueryClientUtils.TASKS_QUERY_KEY,
+                    ])
                 } catch (error) {
                     const errors = error as AxiosError
 

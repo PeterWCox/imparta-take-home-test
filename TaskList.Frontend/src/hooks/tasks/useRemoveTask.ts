@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
 import { useAppSelector } from '../../redux/hooks'
+import { QueryClientUtils } from '../../utils/QueryClientUtils'
 
 const useRemoveTask = (id: number) => {
     //Hooks
@@ -21,6 +22,10 @@ const useRemoveTask = (id: number) => {
                             },
                         }
                     )
+
+                    queryClient.invalidateQueries([
+                        QueryClientUtils.TASKS_QUERY_KEY,
+                    ])
                 } catch (error) {
                     const errors = error as AxiosError
 
@@ -32,9 +37,6 @@ const useRemoveTask = (id: number) => {
 
                     throw new Error('An unknown error has occured')
                 }
-            },
-            onSuccess: () => {
-                queryClient.invalidateQueries({ queryKey: ['tasks'] })
             },
         }
     )

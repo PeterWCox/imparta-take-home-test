@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
+import { PartialTask } from '../../models/Task'
 import { useAppSelector } from '../../redux/hooks'
+import { QueryClientUtils } from '../../utils/QueryClientUtils'
 
 const useAddTask = (title: string) => {
     //Hooks
@@ -8,22 +10,28 @@ const useAddTask = (title: string) => {
     const token = useAppSelector((state) => state.auth.token)
 
     //Mutations
-    const { mutateAsync: addTask } = useMutation(['add'], {
+    const { mutateAsync: addTask } = useMutation(['add', token], {
         mutationFn: async () => {
-            try {
-                await axios.post(
-                    `http://localhost:24288/api/Tasks`,
-                    {
-                        title: title,
-                    },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                )
+            const task: PartialTask = {
+                title: title,
+            }
 
-                queryClient.invalidateQueries({ queryKey: ['tasks'] })
+            if (!token) {
+                throw new Error(
+                    'You are not authenticated - please refresh the page and try logging in again.'
+                )
+            }
+
+            try {
+                await axios.post(`http://localhost:24288/api/Tasks`, task, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                })
+
+                queryClient.invalidateQueries([
+                    QueryClientUtils.TASKS_QUERY_KEY,
+                ])
             } catch (error) {
                 const errors = error as AxiosError
 
