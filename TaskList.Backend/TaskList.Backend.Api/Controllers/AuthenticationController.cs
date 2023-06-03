@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using NuGet.Common;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -50,23 +49,15 @@ public class AuthenticationController : ControllerBase
         var claims = decodedToken.Claims.ToList();
         var name = claims[0].Value;
         var user = await userManager.FindByNameAsync(name);
-        var userResponse = new UserResponse
+
+        return Ok(new
         {
-            Id = user.Id,
-            Username = user.UserName,
-            Email = user.Email
-        };
-
-        return Ok(userResponse);
+            user.Id,
+            user.UserName,
+            user.Email
+        });
 
 
-    }
-
-    public class UserResponse
-    {
-        public string Id { get; set; }
-        public string Username { get; set; }
-        public string Email { get; set; }
     }
 
 
@@ -100,7 +91,7 @@ public class AuthenticationController : ControllerBase
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );
-            
+
             return Ok(new
             {
                 token = new JwtSecurityTokenHandler().WriteToken(token),

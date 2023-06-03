@@ -1,12 +1,13 @@
 <!-- TODO -->
 
-1. Use createAPI from Redux toolkit
-2. Upgrade to ASP.NET Core 7.0
-3. Cookies token - HTTP only and use IP adress
-4. Kevin Powell Backgrounds
+1. Cookies - set expiry date
+2. Make it responsive
+3. Right click menu for delete
+
+<!-- Last minute -->
+
+1. Unit tests
+2. Cookies token - HTTP only and use IP adress
+3. Kevin Powell Backgrounds
+4. Storybook
 5. Cancellation token
-6. Storybook
-7. Unit tests
-8. Make it responsive
-9. Right click menu for delete
-10. Clean up references to 'Todo' in backend
