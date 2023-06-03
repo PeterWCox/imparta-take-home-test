@@ -6,6 +6,7 @@ import {
     SearchBox,
     Text,
 } from '@fluentui/react'
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { StringParam, useQueryParam } from 'use-query-params'
 import useTasks from '../hooks/tasks/useTasks'
@@ -33,6 +34,9 @@ export const TaskListApp = () => {
     const dispatch = useAppDispatch()
     const { user } = useAppSelector((state: RootState) => state.auth)
 
+    //Hooks
+    const queryClient = useQueryClient()
+
     useEffect(() => {
         //On init - Try and get cached token
         const token = new TokenRepository_Cookie().getToken()
@@ -57,6 +61,7 @@ export const TaskListApp = () => {
     }
     const handleSignoutButtonClick = () => {
         dispatch(logout())
+        queryClient.invalidateQueries('tasks')
     }
     const handleSignInModalClose = () => {
         setIsSigninModalOpen(false)

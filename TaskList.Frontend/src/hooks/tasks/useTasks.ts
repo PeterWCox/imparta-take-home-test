@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
-import { setUser } from '../../redux/slices/authSlice'
 import { RootState } from '../../redux/store'
 
 const useTasks = () => {
@@ -20,10 +19,6 @@ const useTasks = () => {
                         },
                     }
                 )
-
-                if (response.data) {
-                    dispatch(setUser(response.data))
-                }
 
                 return response.data
             } catch (error) {
