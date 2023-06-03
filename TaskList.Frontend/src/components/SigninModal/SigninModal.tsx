@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import useSignin from '../../hooks/user/useSignin'
 import { ModalWrapper } from '../../lib/ModalWrapper/ModalWrapper'
+import { ValidationUtils } from '../../utils/ValidationUtils'
 import styles from './SigninModal.module.css'
 
 export interface ISigninModalProps {
@@ -38,8 +39,6 @@ export const SigninModal = (props: ISigninModalProps) => {
         >
             <form
                 onSubmit={handleSubmit((data) => {
-                    console.log(data)
-                    console.log(errors)
                     setUsername(data.Username)
                     setPassword(data.Password)
                     signin()
@@ -58,7 +57,10 @@ export const SigninModal = (props: ISigninModalProps) => {
                             onBlur={onBlur}
                             value={value}
                             errorMessage={
-                                errors.Username && 'Username is required'
+                                errors.Username &&
+                                ValidationUtils.getValidationRequiredMessage(
+                                    'Username'
+                                )
                             }
                         />
                     )}
@@ -68,6 +70,7 @@ export const SigninModal = (props: ISigninModalProps) => {
                 <Controller
                     control={control}
                     name="Password"
+                    rules={{ required: true }}
                     render={({ field: { onChange, onBlur, value } }) => (
                         <TextField
                             id="Password"
@@ -76,7 +79,10 @@ export const SigninModal = (props: ISigninModalProps) => {
                             onBlur={onBlur}
                             value={value}
                             errorMessage={
-                                errors.Password && 'Password is required'
+                                errors.Password &&
+                                ValidationUtils.getValidationRequiredMessage(
+                                    'Password'
+                                )
                             }
                         />
                     )}
@@ -96,6 +102,7 @@ export const SigninModal = (props: ISigninModalProps) => {
                         text="Signin"
                         allowDisabledFocus
                         type="submit"
+                        disabled={Object.keys(errors).length > 0}
                     />
                 </div>
             </form>
