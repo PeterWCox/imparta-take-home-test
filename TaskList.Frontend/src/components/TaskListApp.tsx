@@ -7,6 +7,7 @@ import {
     Text,
 } from '@fluentui/react'
 import { useEffect, useState } from 'react'
+import { StringParam, useQueryParam } from 'use-query-params'
 import useTasks from '../hooks/tasks/useTasks'
 import useGetUser from '../hooks/user/useUser'
 import { Task } from '../models/Task'
@@ -21,13 +22,16 @@ import { TaskColumn } from './TaskColumn/TaskColumn'
 import styles from './TaskListApp.module.css'
 
 export const TaskListApp = () => {
+    //QP's
+    const [searchQuery, setSearchQuery] = useQueryParam('q', StringParam)
+
     //States
     const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false)
     const [isSigninModalOpen, setIsSigninModalOpen] = useState(false)
 
     //Redux
     const dispatch = useAppDispatch()
-    const { token, user } = useAppSelector((state: RootState) => state.auth)
+    const { user } = useAppSelector((state: RootState) => state.auth)
 
     useEffect(() => {
         //On init - Try and get cached token
@@ -59,6 +63,9 @@ export const TaskListApp = () => {
     }
     const handleRegisterModalClose = () => {
         setIsRegisterModalOpen(false)
+    }
+    const handleSearchboxChange = (_: any, newValue?: string) => {
+        setSearchQuery(newValue)
     }
 
     return (
@@ -119,11 +126,10 @@ export const TaskListApp = () => {
                         {/* Searchbox */}
                         <div>
                             <SearchBox
-                                placeholder="Search"
-                                onSearch={(newValue) =>
-                                    console.log('value is ' + newValue)
-                                }
+                                placeholder="Search tasks..."
+                                onChange={handleSearchboxChange}
                                 showIcon
+                                value={searchQuery ?? ''}
                             />
                         </div>
                     </div>
