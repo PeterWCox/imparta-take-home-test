@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -19,17 +20,30 @@ namespace TaskList.Backend.Api.Controllers;
 [ApiController]
 public class AuthenticationController : ControllerBase
 {
-    private readonly UserManager<ApplicationUser> userManager;
-    private readonly RoleManager<IdentityRole> roleManager;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IConfiguration _configuration;
+    private readonly IValidator<LoginModel> _loginValidator;
+    private readonly IValidator<RegisterModel> _registerValidator;
 
-    public AuthenticationController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+
+    public AuthenticationController(
+        UserManager<ApplicationUser> userManager,
+        RoleManager<IdentityRole> roleManager,
+        IConfiguration configuration,
+        IValidator<LoginModel> loginValidator,
+        IValidator<LoginModel> validator,
+        IValidator<RegisterModel> registerValidator
+    )
     {
-        this.userManager = userManager;
-        this.roleManager = roleManager;
+        _userManager = userManager;
+        _roleManager = roleManager;
         _configuration = configuration;
+        _loginValidator = loginValidator;
+        _registerValidator = registerValidator;
     }
 
+    // GET: api/Authentication/me
     [HttpGet]
     [Route("me")]
     public async Task<IActionResult> Me()
@@ -48,7 +62,7 @@ public class AuthenticationController : ControllerBase
         //Get the email claim
         var claims = decodedToken.Claims.ToList();
         var name = claims[0].Value;
-        var user = await userManager.FindByNameAsync(name);
+        var user = await _userManager.FindByNameAsync(name);
 
         return Ok(new
         {
@@ -65,11 +79,18 @@ public class AuthenticationController : ControllerBase
     [Route("login")]
     public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
-        var user = await userManager.FindByNameAsync(model.Username);
-
-        if (user != null && await userManager.CheckPasswordAsync(user, model.Password))
+        var x = _loginValidator.Validate(model);
+        if (!x.IsValid)
         {
-            var userRoles = await userManager.GetRolesAsync(user);
+            return BadRequest(x.Errors);
+        }
+
+        ApplicationUser user = await _userManager.FindByEmailAsync(model.Email);
+        bool isPasswordValid = await _userManager.CheckPasswordAsync(user, model.Password);
+
+        if (user != null && isPasswordValid)
+        {
+            var userRoles = await _userManager.GetRolesAsync(user);
             var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
@@ -105,13 +126,22 @@ public class AuthenticationController : ControllerBase
     [Route("register")]
     public async Task<IActionResult> Register([FromBody] RegisterModel model)
     {
-        ApplicationUser userExists = await userManager.FindByNameAsync(model.Username);
-
-        if (userExists != null)
+        //Ensure that the model is valid
+        var x = _registerValidator.Validate(model);
+        if (!x.IsValid)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
+            return BadRequest(x.Errors.Where(x => x.ErrorMessage is not null));
+        }
+
+        //Check if user has already registered their e-mail address
+        ApplicationUser emailExists = await _userManager.FindByEmailAsync(model.Email);
+        Console.WriteLine(emailExists);
+        if (emailExists is not null)
+        {
+            return BadRequest();
         };
 
+        //Create the user and save it to the DB 
         ApplicationUser user = new ApplicationUser()
         {
             Email = model.Email,
@@ -119,7 +149,8 @@ public class AuthenticationController : ControllerBase
             UserName = model.Username
         };
 
-        var result = await userManager.CreateAsync(user, model.Password);
+        var result = await _userManager.CreateAsync(user, model.Password);
+
 
         if (!result.Succeeded)
         {
@@ -133,7 +164,7 @@ public class AuthenticationController : ControllerBase
     [Route("register-admin")]
     public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
     {
-        var userExists = await userManager.FindByNameAsync(model.Username);
+        var userExists = await _userManager.FindByNameAsync(model.Username);
 
         if (userExists != null)
         {
@@ -147,26 +178,26 @@ public class AuthenticationController : ControllerBase
             UserName = model.Username
         };
 
-        var result = await userManager.CreateAsync(user, model.Password);
+        var result = await _userManager.CreateAsync(user, model.Password);
 
         if (!result.Succeeded)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
         }
 
-        if (!await roleManager.RoleExistsAsync(UserRoles.Admin))
+        if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
         {
-            await roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+            await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
         }
 
-        if (!await roleManager.RoleExistsAsync(UserRoles.User))
+        if (!await _roleManager.RoleExistsAsync(UserRoles.User))
         {
-            await roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+            await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
         }
 
-        if (await roleManager.RoleExistsAsync(UserRoles.Admin))
+        if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
         {
-            await userManager.AddToRoleAsync(user, UserRoles.Admin);
+            await _userManager.AddToRoleAsync(user, UserRoles.Admin);
         }
 
         return Ok(new Response { Status = "Success", Message = "User created successfully" });

@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -41,6 +42,31 @@ public class Startup
         services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
+
+        //FluentValidation DI
+        services.AddScoped<IValidator<LoginModel>, LoginValidator>();
+        services.AddScoped<IValidator<RegisterModel>, RegisterValidator>();
+        services.AddScoped<IValidator<TaskModel>, TaskValidator>();
+
+        //Password settings
+        services.Configure<IdentityOptions>(options =>
+        {
+            //Password settings
+            options.Password.RequireDigit = false;
+            options.Password.RequiredLength = 1;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequireUppercase = false;
+            options.Password.RequireLowercase = false;
+
+            //Lockout settings
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+            options.Lockout.MaxFailedAccessAttempts = 5;
+            options.Lockout.AllowedForNewUsers = true;
+
+            //User settings
+            options.User.RequireUniqueEmail = true;
+        });
+
 
         services.AddAuthentication(options =>
         {
