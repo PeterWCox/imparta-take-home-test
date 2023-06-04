@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
 import { PartialTask } from '../../models/Task'
 import { useAppSelector } from '../../redux/hooks'
+import { Constants } from '../../utils/Constants'
 import { QueryClientUtils } from '../../utils/QueryClientUtils'
 
 const useAddTask = (title: string) => {
@@ -10,20 +11,14 @@ const useAddTask = (title: string) => {
     const token = useAppSelector((state) => state.auth.token)
 
     //Mutations
-    const { mutateAsync: addTask } = useMutation(['add', token], {
+    const { mutateAsync: addTask } = useMutation(['task'], {
         mutationFn: async () => {
             const task: PartialTask = {
                 title: title,
             }
 
-            if (!token) {
-                throw new Error(
-                    'You are not authenticated - please refresh the page and try logging in again.'
-                )
-            }
-
             try {
-                await axios.post(`http://localhost:24288/api/Tasks`, task, {
+                await axios.post(`${Constants.BASE_URL}Tasks`, task, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -40,8 +35,6 @@ const useAddTask = (title: string) => {
                         'You are not authenticated - please refresh the page and try logging in again.'
                     )
                 }
-
-                throw new Error('An unknown error has occured')
             }
         },
     })

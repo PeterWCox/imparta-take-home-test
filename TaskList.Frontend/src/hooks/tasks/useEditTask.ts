@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
 import { Task } from '../../models/Task'
 import { useAppSelector } from '../../redux/hooks'
+import { Constants } from '../../utils/Constants'
 import { QueryClientUtils } from '../../utils/QueryClientUtils'
 
 const useEditTask = (task: Task) => {
@@ -16,7 +17,7 @@ const useEditTask = (task: Task) => {
             mutationFn: async () => {
                 try {
                     await axios.put(
-                        `http://localhost:24288/api/Tasks/${task.id}`,
+                        `${Constants.BASE_URL}Tasks/${task.id}`,
                         task,
                         {
                             headers: {

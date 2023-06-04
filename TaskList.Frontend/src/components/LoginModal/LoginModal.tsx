@@ -4,25 +4,27 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
-import useSignin from '../../hooks/user/useSignin'
+import useLogin from '../../hooks/user/useLogin'
 import { ModalForm } from '../../lib/ModalForm/ModalForm'
-import styles from './SigninModal.module.css'
+import styles from './LoginModal.module.css'
 
-export interface ISigninModalProps {
+export interface ILoginModalProps {
     isModalOpen: boolean
     hideModal: () => void
 }
 
 const validationSchema = z.object({
-    Username: z.string().min(1, { message: 'Username is required' }),
+    Email: z.string().nonempty({ message: 'Email is required' }).email({
+        message: 'Please enter a valid email address',
+    }),
     Password: z.string().min(1, { message: 'Password is required' }),
 })
 
 type ValidationSchema = z.infer<typeof validationSchema>
 
-export const SigninModal = (props: ISigninModalProps) => {
+export const LoginModal = (props: ILoginModalProps) => {
     //States
-    const [username, setUsername] = useState('')
+    const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
     //React-Hook-Form
@@ -34,8 +36,8 @@ export const SigninModal = (props: ISigninModalProps) => {
         resolver: zodResolver(validationSchema),
     })
 
-    const [signin, error] = useSignin({
-        username,
+    const [login, error] = useLogin({
+        email,
         password,
     })
 
@@ -44,29 +46,29 @@ export const SigninModal = (props: ISigninModalProps) => {
 
     return (
         <ModalForm
-            title={'Signin'}
+            title={'Login'}
             isModalOpen={props.isModalOpen}
             hideModal={props.hideModal}
             onSubmit={handleSubmit((data) => {
-                setUsername(data.Username)
+                setEmail(data.Email)
                 setPassword(data.Password)
-                signin()
+                login()
             })}
         >
+            {password}
+
             {/* Username */}
             <Controller
                 control={control}
-                name="Username"
+                name="Email"
                 render={({ field: { onChange, onBlur, value } }) => (
                     <TextField
-                        id="Username"
-                        label="Username"
+                        id="Email"
+                        label="Email"
                         onChange={onChange}
                         onBlur={onBlur}
                         value={value}
-                        errorMessage={
-                            errors.Username && errors.Username?.message
-                        }
+                        errorMessage={errors.Email && errors.Email?.message}
                     />
                 )}
             />
@@ -104,7 +106,6 @@ export const SigninModal = (props: ISigninModalProps) => {
                 {/* Signin Button */}
                 <PrimaryButton
                     text="Signin"
-                    allowDisabledFocus
                     type="submit"
                     disabled={Object.keys(errors).length > 0}
                 />

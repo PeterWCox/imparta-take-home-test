@@ -3,6 +3,7 @@ import axios, { AxiosError } from 'axios'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import { setUser } from '../../redux/slices/authSlice'
 import { RootState } from '../../redux/store'
+import { Constants } from '../../utils/Constants'
 
 const useUser = () => {
     //Redux
@@ -14,7 +15,7 @@ const useUser = () => {
         queryFn: async () => {
             try {
                 const response = await axios.get(
-                    `http://localhost:24288/api/Authentication/me`,
+                    `${Constants.BASE_URL}Authentication/me`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

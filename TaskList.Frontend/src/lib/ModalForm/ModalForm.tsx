@@ -11,7 +11,7 @@ export interface IModalFormProps {
     title: string
     isModalOpen: boolean
     hideModal: () => void
-    onSubmit: () => void
+    onSubmit: (e: any) => void
     children: React.ReactNode
 }
 

@@ -3,13 +3,14 @@ import axios, { AxiosError } from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '../../redux/hooks'
 import { setToken } from '../../redux/slices/authSlice'
+import { Constants } from '../../utils/Constants'
 
-export interface SigninRequest {
-    username: string
+export interface LoginRequest {
+    email: string
     password: string
 }
 
-const useSignin = (request: SigninRequest) => {
+const useSignin = (request: LoginRequest) => {
     //Routing
     const navigate = useNavigate()
 
@@ -17,11 +18,11 @@ const useSignin = (request: SigninRequest) => {
     const dispatch = useAppDispatch()
 
     //Mutations
-    const { mutateAsync: signin, error } = useMutation([request], {
+    const { mutateAsync: signin, error } = useMutation(['signin'], {
         mutationFn: async () => {
             try {
                 const response = await axios.post(
-                    `http://localhost:24288/api/Authentication/Login`,
+                    `${Constants.BASE_URL}Authentication/Login`,
                     request
                 )
 

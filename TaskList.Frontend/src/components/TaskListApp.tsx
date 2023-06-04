@@ -17,8 +17,8 @@ import { logout, setToken } from '../redux/slices/authSlice'
 import { RootState } from '../redux/store'
 import { TokenRepository_Cookie } from '../repositories/TokenRepository'
 import { AddTask } from './AddTask/AddTask'
+import { LoginModal } from './LoginModal/LoginModal'
 import { RegisterModal } from './RegisterModal/RegisterModal'
-import { SigninModal } from './SigninModal/SigninModal'
 import { TaskColumn } from './TaskColumn/TaskColumn'
 import styles from './TaskListApp.module.css'
 
@@ -85,7 +85,7 @@ export const TaskListApp = () => {
 
             {/* Signin Modal */}
             {isSigninModalOpen ? (
-                <SigninModal
+                <LoginModal
                     isModalOpen={isSigninModalOpen}
                     hideModal={handleSignInModalClose}
                 />

@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
 import { useAppSelector } from '../../redux/hooks'
+import { Constants } from '../../utils/Constants'
 import { QueryClientUtils } from '../../utils/QueryClientUtils'
 
 const useRemoveTask = (id: number) => {
@@ -14,14 +15,11 @@ const useRemoveTask = (id: number) => {
         {
             mutationFn: async () => {
                 try {
-                    await axios.delete(
-                        `http://localhost:24288/api/Tasks/${id}`,
-                        {
-                            headers: {
-                                Authorization: `Bearer ${token}`,
-                            },
-                        }
-                    )
+                    await axios.delete(`${Constants.BASE_URL}Tasks/${id}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    })
 
                     queryClient.invalidateQueries([
                         QueryClientUtils.TASKS_QUERY_KEY,

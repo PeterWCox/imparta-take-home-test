@@ -3,6 +3,7 @@ import axios, { AxiosError } from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '../../redux/hooks'
 import { setToken } from '../../redux/slices/authSlice'
+import { Constants } from '../../utils/Constants'
 
 export interface RegisterRequest {
     username: string
@@ -21,10 +22,8 @@ const useRegister = (request: RegisterRequest | null) => {
     const { mutateAsync: register, error } = useMutation([request], {
         mutationFn: async () => {
             try {
-                if (!request) throw new Error('Invalid request')
-
                 const response = await axios.post(
-                    `http://localhost:24288/api/Authentication/Register`,
+                    `${Constants.BASE_URL}Authentication/Register`,
                     request
                 )
 
