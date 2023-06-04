@@ -12,8 +12,8 @@ using TaskList.Backend.Api.Models;
 namespace TaskList.Backend.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230604160707_init")]
-    partial class init
+    [Migration("20230604232230_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

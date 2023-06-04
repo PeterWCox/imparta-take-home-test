@@ -90,28 +90,7 @@ public class AuthenticationController : ControllerBase
 
         if (user != null && isPasswordValid)
         {
-            var userRoles = await _userManager.GetRolesAsync(user);
-            var authClaims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                };
-
-
-            foreach (var userRole in userRoles)
-            {
-                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-            }
-
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["JWT:ValidIssuer"],
-                audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddHours(3),
-                claims: authClaims,
-                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-            );
+            var token = await GetToken(user);
 
             return Ok(new
             {
@@ -149,15 +128,23 @@ public class AuthenticationController : ControllerBase
             UserName = model.Username
         };
 
-        var result = await _userManager.CreateAsync(user, model.Password);
-
+        IdentityResult result = await _userManager.CreateAsync(user, model.Password);
 
         if (!result.Succeeded)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
         }
 
-        return Ok(new Response { Status = "Success", Message = "User created successfully" });
+        //Generate a bearer token to send in the response body
+        ApplicationUser newUser = await _userManager.FindByEmailAsync(model.Email);
+        var token = await GetToken(user);
+
+        return Ok(new
+        {
+            token = new JwtSecurityTokenHandler().WriteToken(token),
+            expiration = token.ValidTo
+        });
+
     }
 
     [HttpPost]
@@ -201,6 +188,34 @@ public class AuthenticationController : ControllerBase
         }
 
         return Ok(new Response { Status = "Success", Message = "User created successfully" });
-
     }
+
+    public async Task<JwtSecurityToken> GetToken(ApplicationUser user)
+    {
+        var userRoles = await _userManager.GetRolesAsync(user);
+        var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                };
+
+
+        foreach (var userRole in userRoles)
+        {
+            authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+        }
+
+        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+
+        var token = new JwtSecurityToken(
+            issuer: _configuration["JWT:ValidIssuer"],
+            audience: _configuration["JWT:ValidAudience"],
+            expires: DateTime.Now.AddHours(3),
+            claims: authClaims,
+            signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+        );
+
+        return token;
+    }
+
 }

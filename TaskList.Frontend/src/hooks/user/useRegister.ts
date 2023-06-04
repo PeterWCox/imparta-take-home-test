@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '../../redux/hooks'
 import { setToken } from '../../redux/slices/authSlice'
@@ -12,11 +12,11 @@ export interface RegisterRequest {
 }
 
 const useRegister = (request: RegisterRequest | null) => {
-    //Routing
-    const navigate = useNavigate()
-
     //Redux
     const dispatch = useAppDispatch()
+
+    //Routing
+    const navigate = useNavigate()
 
     //Mutations
     const { mutateAsync: register, error } = useMutation([request], {
@@ -33,12 +33,6 @@ const useRegister = (request: RegisterRequest | null) => {
                     navigate(0)
                 }
             } catch (error) {
-                const errors = error as AxiosError
-
-                if (errors?.response?.status === 401) {
-                    throw new Error('Invalid username or password')
-                }
-
                 throw new Error('An unknown error has occured')
             }
         },

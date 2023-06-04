@@ -37,6 +37,7 @@ export const AddTask = () => {
             onSubmit={handleSubmit((data) => {
                 setTaskName(data.Title)
                 addTask()
+                setTaskName('')
             })}
         >
             {/* Username */}
