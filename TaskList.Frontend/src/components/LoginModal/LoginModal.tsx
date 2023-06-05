@@ -18,7 +18,6 @@ const validationSchema = z.object({
         message: 'Please enter a valid email address',
     }),
     Password: z.string().min(1, { message: 'Password is required' }),
-    ConfirmPassword: z.string().min(1, { message: 'Password is required' }),
 })
 
 type ValidationSchema = z.infer<typeof validationSchema>
@@ -90,28 +89,6 @@ export const LoginModal = (props: ILoginModalProps) => {
                         type="password"
                         canRevealPassword
                         revealPasswordAriaLabel="Show password"
-                        onChange={onChange}
-                        onBlur={onBlur}
-                        value={value}
-                        disabled={isLoading}
-                        errorMessage={
-                            errors.Password && errors.Password?.message
-                        }
-                    />
-                )}
-            />
-
-            {/* Confirm Password */}
-            <Controller
-                control={control}
-                name="ConfirmPassword"
-                render={({ field: { onChange, onBlur, value } }) => (
-                    <TextField
-                        id="ConfirmPassword"
-                        label="Confirm password"
-                        type="password"
-                        canRevealPassword
-                        revealPasswordAriaLabel="Show confirm password"
                         onChange={onChange}
                         onBlur={onBlur}
                         value={value}
