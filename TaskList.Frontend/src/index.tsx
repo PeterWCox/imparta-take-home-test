@@ -7,6 +7,7 @@ import { QueryParamProvider } from 'use-query-params'
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6'
 import { TaskListApp } from './components/TaskListApp'
 import './index.css'
+import { Header } from './lib/Header/Header'
 import { store } from './redux/store'
 
 //Initialize FluentUI icons
@@ -25,9 +26,12 @@ root.render(
                         <Route
                             path="/"
                             element={
-                                <main>
-                                    <TaskListApp />
-                                </main>
+                                <>
+                                    <Header />
+                                    <main>
+                                        <TaskListApp />
+                                    </main>
+                                </>
                             }
                         />
                     </Routes>
