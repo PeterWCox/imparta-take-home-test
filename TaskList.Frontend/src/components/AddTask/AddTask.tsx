@@ -40,24 +40,52 @@ export const AddTask = () => {
                 addTask()
                 reset()
             })}
+            style={
+                {
+                    // display: 'flex',
+                    // gap: '1rem',
+                    // width: '100%',
+                    // alignItems: 'center',
+                    // margin: '0 auto',
+                    // justifyContent: 'center',
+                }
+            }
         >
             {/* Username */}
-            <Controller
-                control={control}
-                name="Title"
-                render={({ field: { onChange, onBlur, value } }) => (
-                    <TextField
-                        id="Add Task"
-                        label="Add Task"
-                        onChange={onChange}
-                        onBlur={onBlur}
-                        value={value}
-                        errorMessage={errors.Title && errors.Title?.message}
-                    />
-                )}
-            />
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.5rem',
+                    alignItems: 'center',
+                    width: 600,
+                }}
+            >
+                <Controller
+                    control={control}
+                    name="Title"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                        <TextField
+                            id="Add Task"
+                            onChange={onChange}
+                            onBlur={onBlur}
+                            value={value}
+                            errorMessage={errors.Title && errors.Title?.message}
+                        />
+                    )}
+                />
 
-            <PrimaryButton type="submit">Add Task</PrimaryButton>
+                <PrimaryButton
+                    type="submit"
+                    styles={{
+                        root: {
+                            width: 'fit-content',
+                        },
+                    }}
+                >
+                    Add Task
+                </PrimaryButton>
+            </div>
         </form>
     )
 }

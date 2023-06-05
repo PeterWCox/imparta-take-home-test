@@ -25,9 +25,6 @@ const useSignin = (request: LoginRequest) => {
     } = useMutation(['signin'], {
         mutationFn: async () => {
             try {
-                //Add a 5s delay to simulate a real API call
-                await new Promise((resolve) => setTimeout(resolve, 5000))
-
                 const response = await axios.post(
                     `${Constants.BASE_URL}Authentication/Login`,
                     request

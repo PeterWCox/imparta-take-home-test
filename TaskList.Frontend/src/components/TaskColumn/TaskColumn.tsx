@@ -19,12 +19,15 @@ export const TaskColumn = (props: ITaskColumnProps) => {
     const incompleteTasks = props.tasks.filter((t: Task) => !t.isDone) || []
     const completedTasks = props.tasks.filter((t: Task) => t.isDone) || []
 
+    const title =
+        props.tasks.filter((t) => !t.isDone).length > 0
+            ? `${props.title} (${props.tasks.filter((t) => !t.isDone).length})`
+            : props.title
+
     return (
         <div className={styles.taskColumn}>
             {/* Status Title */}
-            <Text variant="xLarge">{`${props.title} (${
-                props.tasks.filter((t) => !t.isDone).length
-            })`}</Text>
+            <Text variant="xLarge">{title}</Text>
 
             <div className={styles.tasksColumnContainer}>
                 {/* Incomplete tasks */}

@@ -15,6 +15,9 @@ const useRegister = (request: RegisterRequest | null) => {
     //Redux
     const dispatch = useAppDispatch()
 
+    //q: How do I unstage last commit
+    //a: git reset --soft HEAD~1
+
     //Routing
     const navigate = useNavigate()
 

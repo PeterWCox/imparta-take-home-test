@@ -3,3 +3,16 @@
     width: 100%;
     max-width: 500px;
 }
+
+@media screen and (max-width: 80em) {
+    .statusLists {
+        flex-direction: column;
+    }
+
+    .addTask {
+        margin: 0 auto;
+        flex-direction: column;
+        display: flex;
+        justify-content: center;
+    }
+}

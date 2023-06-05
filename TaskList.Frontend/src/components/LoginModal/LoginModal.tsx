@@ -133,11 +133,7 @@ export const LoginModal = (props: ILoginModalProps) => {
             {/* Button Group */}
             <div className={styles.buttonGroup}>
                 {/* Signin Button */}
-                <PrimaryButton
-                    text="Signin"
-                    type="submit"
-                    disabled={Object.keys(errors).length > 0}
-                />
+                <PrimaryButton text="Signin" type="submit" />
             </div>
         </ModalForm>
     )
