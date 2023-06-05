@@ -7,7 +7,6 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks'
 import { setToken } from '../redux/slices/authSlice'
 import { RootState } from '../redux/store'
 import { TokenRepository_Cookie } from '../repositories/TokenRepository'
-import { NotLoggedIn } from './NotLoggedIn/NotLoggedIn'
 import { TaskColumn as StatusColumn } from './TaskColumn/TaskColumn'
 import styles from './TaskListApp.module.css'
 
@@ -83,8 +82,6 @@ export const TaskListApp = () => {
                                 />
                             </div>
                         ) : null}
-
-                        {!user && !isUserLoading ? <NotLoggedIn /> : null}
                     </div>
                 </div>
             </div>
