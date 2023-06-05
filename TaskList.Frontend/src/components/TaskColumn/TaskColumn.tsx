@@ -1,10 +1,10 @@
-import { Text } from '@fluentui/react'
 import { useState } from 'react'
 import { Status } from '../../enums/Enums'
+import { Accordion } from '../../lib/Accordion/Accordion'
 import { Task } from '../../models/Task'
+import { AddTask } from '../AddTask/AddTask'
 import { ShowCompletedTasks } from '../ShowCompletedTasks/ShowCompletedTasks'
 import { TaskList } from '../TaskList/TaskList'
-import styles from './TaskColumn.module.css'
 
 export interface ITaskColumnProps {
     title: string
@@ -25,36 +25,30 @@ export const TaskColumn = (props: ITaskColumnProps) => {
             : props.title
 
     return (
-        <div className={styles.taskColumn}>
-            {/* Status Title */}
-            <Text variant="xLarge">{title}</Text>
+        <Accordion title={title}>
+            {/* Add Task */}
+            <AddTask status={props.status} />
 
-            <div className={styles.tasksColumnContainer}>
-                {/* Incomplete tasks */}
-                {incompleteTasks?.length > 0 ? (
-                    <TaskList tasks={incompleteTasks} />
-                ) : null}
+            {/* Incomplete tasks */}
+            {incompleteTasks?.length > 0 ? (
+                <TaskList tasks={incompleteTasks} />
+            ) : null}
 
-                {/* {isLoading
+            {/* {isLoading
                     ? [...Array(5)].map((_, i) => <TaskCardLoading />)
                     : null} */}
 
-                {/* Show completed tasks */}
-                {completedTasks.length > 0 ? (
-                    <ShowCompletedTasks
-                        count={completedTasks.length}
-                        showCompletedTasks={showCompletedTasks}
-                        onClick={() =>
-                            setShowCompletedTasks(!showCompletedTasks)
-                        }
-                    />
-                ) : null}
+            {/* Show completed tasks */}
+            {completedTasks.length > 0 ? (
+                <ShowCompletedTasks
+                    count={completedTasks.length}
+                    showCompletedTasks={showCompletedTasks}
+                    onClick={() => setShowCompletedTasks(!showCompletedTasks)}
+                />
+            ) : null}
 
-                {/* Complete Tasks */}
-                {showCompletedTasks ? (
-                    <TaskList tasks={completedTasks} />
-                ) : null}
-            </div>
-        </div>
+            {/* Complete Tasks */}
+            {showCompletedTasks ? <TaskList tasks={completedTasks} /> : null}
+        </Accordion>
     )
 }

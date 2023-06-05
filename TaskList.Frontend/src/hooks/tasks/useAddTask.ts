@@ -5,7 +5,7 @@ import { useAppSelector } from '../../redux/hooks'
 import { Constants } from '../../utils/Constants'
 import { QueryClientUtils } from '../../utils/QueryClientUtils'
 
-const useAddTask = (title: string) => {
+const useAddTask = (task: PartialTask) => {
     //Hooks
     const queryClient = useQueryClient()
     const token = useAppSelector((state) => state.auth.token)
@@ -13,10 +13,6 @@ const useAddTask = (title: string) => {
     //Mutations
     const { mutateAsync: addTask } = useMutation(['task'], {
         mutationFn: async () => {
-            const task: PartialTask = {
-                title: title,
-            }
-
             try {
                 await axios.post(`${Constants.BASE_URL}Tasks`, task, {
                     headers: {

@@ -29,7 +29,9 @@ export const TaskCard = (props: ITaskCardProps) => {
     const linkRef = useRef(null)
 
     //Hooks
-    const [add] = useAddTask(title)
+    const [add] = useAddTask({
+        title: title,
+    })
     const [edit] = useEditTask(updatedTodo)
     const [remove] = useRemoveTask(props.task.id)
 

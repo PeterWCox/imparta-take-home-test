@@ -1,18 +1,9 @@
 .addTask {
+    flex-direction: column;
+    display: flex;
     margin: 0 auto;
     width: 100%;
+    align-items: center;
     max-width: 500px;
-}
-
-@media screen and (max-width: 80em) {
-    .statusLists {
-        flex-direction: column;
-    }
-
-    .addTask {
-        margin: 0 auto;
-        flex-direction: column;
-        display: flex;
-        justify-content: center;
-    }
+    gap: 20px;
 }

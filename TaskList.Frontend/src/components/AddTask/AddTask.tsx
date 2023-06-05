@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { Status } from '../../enums/Enums'
 import useAddTask from '../../hooks/tasks/useAddTask'
 import styles from './AddTask.module.css'
 
@@ -15,7 +16,11 @@ const validationSchema = z.object({
 
 type ValidationSchema = z.infer<typeof validationSchema>
 
-export const AddTask = () => {
+export interface IAddTaskProps {
+    status: Status
+}
+
+export const AddTask = (props: IAddTaskProps) => {
     //States
     const [taskName, setTaskName] = useState<string>('')
 
@@ -30,62 +35,47 @@ export const AddTask = () => {
     })
 
     //Hooks
-    const [addTask] = useAddTask(taskName)
+    const [addTask] = useAddTask({
+        title: taskName,
+        status: props.status,
+    })
 
     return (
         <form
-            className={styles.AddTask}
+            className={styles.addTask}
             onSubmit={handleSubmit((data) => {
                 setTaskName(data.Title)
                 addTask()
-                reset()
+                reset({
+                    Title: '',
+                })
             })}
-            style={
-                {
-                    // display: 'flex',
-                    // gap: '1rem',
-                    // width: '100%',
-                    // alignItems: 'center',
-                    // margin: '0 auto',
-                    // justifyContent: 'center',
-                }
-            }
         >
-            {/* Username */}
-            <div
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.5rem',
-                    alignItems: 'center',
-                    width: 600,
+            <Controller
+                control={control}
+                name="Title"
+                render={({ field: { onChange, onBlur, value } }) => (
+                    <TextField
+                        id="Add Task"
+                        onChange={onChange}
+                        onBlur={onBlur}
+                        value={value}
+                        errorMessage={errors.Title && errors.Title?.message}
+                    />
+                )}
+            />
+
+            <PrimaryButton
+                type="submit"
+                placeholder="Add Task"
+                styles={{
+                    root: {
+                        width: 'fit-content',
+                    },
                 }}
             >
-                <Controller
-                    control={control}
-                    name="Title"
-                    render={({ field: { onChange, onBlur, value } }) => (
-                        <TextField
-                            id="Add Task"
-                            onChange={onChange}
-                            onBlur={onBlur}
-                            value={value}
-                            errorMessage={errors.Title && errors.Title?.message}
-                        />
-                    )}
-                />
-
-                <PrimaryButton
-                    type="submit"
-                    styles={{
-                        root: {
-                            width: 'fit-content',
-                        },
-                    }}
-                >
-                    Add Task
-                </PrimaryButton>
-            </div>
+                Add Task
+            </PrimaryButton>
         </form>
     )
 }

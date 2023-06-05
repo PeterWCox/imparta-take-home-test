@@ -14,7 +14,6 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks'
 import { logout, setToken } from '../redux/slices/authSlice'
 import { RootState } from '../redux/store'
 import { TokenRepository_Cookie } from '../repositories/TokenRepository'
-import { AddTask } from './AddTask/AddTask'
 import { LoginModal } from './LoginModal/LoginModal'
 import { NotLoggedIn } from './NotLoggedIn/NotLoggedIn'
 import { RegisterModal } from './RegisterModal/RegisterModal'
@@ -122,9 +121,6 @@ export const TaskListApp = () => {
                                 )}
                             </div>
                         </div>
-
-                        {/* Add Task */}
-                        {user ? <AddTask /> : null}
 
                         {user ? (
                             <div className={styles.statusLists}>
