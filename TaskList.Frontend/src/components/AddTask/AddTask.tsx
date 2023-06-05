@@ -1,4 +1,4 @@
-import { TextField } from '@fluentui/react'
+import { PrimaryButton, TextField } from '@fluentui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -34,11 +34,12 @@ export const AddTask = () => {
     return (
         <form
             className={styles.AddTask}
-            onSubmit={handleSubmit((data) => {
-                setTaskName(data.Title)
-                addTask()
-                setTaskName('')
-            })}
+            onSubmit={() => {
+                handleSubmit((data) => {
+                    setTaskName(data.Title)
+                    addTask()
+                })
+            }}
         >
             {/* Username */}
             <Controller
@@ -55,6 +56,8 @@ export const AddTask = () => {
                     />
                 )}
             />
+
+            <PrimaryButton type="submit">Add Task</PrimaryButton>
         </form>
     )
 }
