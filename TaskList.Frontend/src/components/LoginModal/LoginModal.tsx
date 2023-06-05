@@ -32,11 +32,13 @@ export const LoginModal = (props: ILoginModalProps) => {
         handleSubmit,
         control,
         formState: { errors },
+        reset,
     } = useForm<ValidationSchema>({
         resolver: zodResolver(validationSchema),
     })
 
-    const [login, error] = useLogin({
+    //Hooks
+    const [login, error, isLoading] = useLogin({
         email,
         password,
     })
@@ -53,6 +55,10 @@ export const LoginModal = (props: ILoginModalProps) => {
                 setEmail(data.Email)
                 setPassword(data.Password)
                 login()
+                if (error) return
+                reset({
+                    Password: '',
+                })
             })}
         >
             {/* Username */}
@@ -67,6 +73,7 @@ export const LoginModal = (props: ILoginModalProps) => {
                         onBlur={onBlur}
                         value={value}
                         errorMessage={errors.Email && errors.Email?.message}
+                        disabled={isLoading}
                     />
                 )}
             />
@@ -85,6 +92,7 @@ export const LoginModal = (props: ILoginModalProps) => {
                         onChange={onChange}
                         onBlur={onBlur}
                         value={value}
+                        disabled={isLoading}
                         errorMessage={
                             errors.Password && errors.Password?.message
                         }
@@ -94,7 +102,7 @@ export const LoginModal = (props: ILoginModalProps) => {
 
             {/* Error message */}
             {error ? (
-                <MessageBar messageBarType={MessageBarType.info}>
+                <MessageBar messageBarType={MessageBarType.warning}>
                     {errorMessage}
                 </MessageBar>
             ) : null}

@@ -82,7 +82,7 @@ public class AuthenticationController : ControllerBase
         var x = _loginValidator.Validate(model);
         if (!x.IsValid)
         {
-            return BadRequest(x.Errors);
+            return StatusCode(StatusCodes.Status400BadRequest, new Response { Status = "Error", Message = x.Errors[0].ErrorMessage ?? "An unknown error has occured. " });
         }
 
         ApplicationUser user = await _userManager.FindByEmailAsync(model.Email);
@@ -98,7 +98,8 @@ public class AuthenticationController : ControllerBase
                 expiration = token.ValidTo
             });
         }
-        return Unauthorized();
+
+        return StatusCode(StatusCodes.Status400BadRequest, new Response { Status = "Error", Message = "Invalid username or password." });
     }
 
     [HttpPost]

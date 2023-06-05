@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '../../redux/hooks'
 import { setToken } from '../../redux/slices/authSlice'
@@ -18,9 +18,16 @@ const useSignin = (request: LoginRequest) => {
     const dispatch = useAppDispatch()
 
     //Mutations
-    const { mutateAsync: signin, error } = useMutation(['signin'], {
+    const {
+        mutateAsync: signin,
+        error,
+        isLoading,
+    } = useMutation(['signin'], {
         mutationFn: async () => {
             try {
+                //Add a 5s delay to simulate a real API call
+                await new Promise((resolve) => setTimeout(resolve, 5000))
+
                 const response = await axios.post(
                     `${Constants.BASE_URL}Authentication/Login`,
                     request
@@ -39,18 +46,21 @@ const useSignin = (request: LoginRequest) => {
                     navigate(0)
                 }
             } catch (error) {
-                const errors = error as AxiosError
+                const errorTS = error as any
+                const errorMessage: any = errorTS.response?.data.message
 
-                if (errors?.response?.status === 401) {
-                    throw new Error('Invalid username or password')
+                if (errorMessage) {
+                    throw new Error(errorMessage)
                 }
 
-                throw new Error('An unknown error has occured')
+                throw new Error(
+                    'An unknown issue has occured. Please try again later.'
+                )
             }
         },
     })
 
-    return [signin, error] as const
+    return [signin, error, isLoading] as const
 }
 
 export default useSignin
