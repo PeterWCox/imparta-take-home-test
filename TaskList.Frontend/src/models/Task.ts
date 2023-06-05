@@ -1,3 +1,5 @@
+import { Status } from '../enums/Enums'
+
 export interface Task {
     id: number
     title: string
@@ -6,9 +8,3 @@ export interface Task {
 }
 
 export type PartialTask = Partial<Task>
-
-export enum Status {
-    Pending = 0,
-    InProgress = 1,
-    Completed = 2,
-}
