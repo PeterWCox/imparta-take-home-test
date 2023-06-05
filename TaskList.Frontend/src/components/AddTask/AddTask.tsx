@@ -24,6 +24,7 @@ export const AddTask = () => {
         handleSubmit,
         control,
         formState: { errors },
+        reset,
     } = useForm<ValidationSchema>({
         resolver: zodResolver(validationSchema),
     })
@@ -34,12 +35,11 @@ export const AddTask = () => {
     return (
         <form
             className={styles.AddTask}
-            onSubmit={() => {
-                handleSubmit((data) => {
-                    setTaskName(data.Title)
-                    addTask()
-                })
-            }}
+            onSubmit={handleSubmit((data) => {
+                setTaskName(data.Title)
+                addTask()
+                reset()
+            })}
         >
             {/* Username */}
             <Controller
