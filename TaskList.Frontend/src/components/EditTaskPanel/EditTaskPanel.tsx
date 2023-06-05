@@ -51,6 +51,7 @@ export const EditTaskPanel = (props: IEditTaskPanelProps) => {
         <Panel
             isOpen={props.isOpen}
             onDismiss={props.onDismiss}
+            isLightDismiss
             headerText="Edit Panel"
             closeButtonAriaLabel="Close"
             onRenderFooterContent={onRenderFooterContent}
