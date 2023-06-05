@@ -19,7 +19,11 @@ const useRegister = (request: RegisterRequest | null) => {
     const navigate = useNavigate()
 
     //Mutations
-    const { mutateAsync: register, error } = useMutation([request], {
+    const {
+        mutateAsync: register,
+        error,
+        isLoading,
+    } = useMutation([request], {
         mutationFn: async () => {
             try {
                 const response = await axios.post(
@@ -40,12 +44,21 @@ const useRegister = (request: RegisterRequest | null) => {
                     navigate(0)
                 }
             } catch (error) {
-                throw new Error('An unknown error has occured')
+                const errorTS = error as any
+                const errorMessage: any = errorTS.response?.data.message
+
+                if (errorMessage) {
+                    throw new Error(errorMessage)
+                }
+
+                throw new Error(
+                    'An unknown issue has occured. Please try again later.'
+                )
             }
         },
     })
 
-    return [register, error] as const
+    return [register, error, isLoading] as const
 }
 
 export default useRegister

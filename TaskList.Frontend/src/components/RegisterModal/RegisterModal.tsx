@@ -1,4 +1,4 @@
-import { TextField } from '@fluentui/react'
+import { MessageBar, MessageBarType, TextField } from '@fluentui/react'
 import { PrimaryButton } from '@fluentui/react/lib/Button'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
@@ -12,10 +12,12 @@ import styles from './RegisterModal.module.css'
 const validationSchema = z
     .object({
         Username: z.string().min(1, { message: 'Username is required' }),
-        Password: z.string().min(1, { message: 'Password is required' }),
         Email: z.string().min(1, { message: 'Email is required' }).email({
             message: 'Must be a valid email',
         }),
+        Password: z
+            .string()
+            .min(6, { message: 'Password must be atleast 6 characters' }),
         ConfirmPassword: z
             .string()
             .min(6, { message: 'Password must be atleast 6 characters' }),
@@ -42,12 +44,16 @@ export const RegisterModal = (props: IRegisterModalProps) => {
         handleSubmit,
         control,
         formState: { errors },
+        reset,
     } = useForm<ValidationSchema>({
         resolver: zodResolver(validationSchema),
     })
 
     //Mutations
-    const [register] = useRegister(registrationRequest)
+    const [register, isLoading, error] = useRegister(registrationRequest)
+
+    //@ts-ignore
+    const errorMessage = error?.message
 
     return (
         <ModalForm
@@ -61,6 +67,11 @@ export const RegisterModal = (props: IRegisterModalProps) => {
                     email: data.Email,
                 })
                 register()
+                if (!error) {
+                    reset({
+                        Username: '',
+                    })
+                }
             })}
         >
             {/* Username */}
@@ -74,6 +85,7 @@ export const RegisterModal = (props: IRegisterModalProps) => {
                         onChange={onChange}
                         onBlur={onBlur}
                         value={value}
+                        disabled={isLoading as boolean}
                         errorMessage={
                             errors.Username && errors.Username?.message
                         }
@@ -92,6 +104,7 @@ export const RegisterModal = (props: IRegisterModalProps) => {
                         onChange={onChange}
                         onBlur={onBlur}
                         value={value}
+                        disabled={isLoading as boolean}
                         errorMessage={errors.Email && errors.Email?.message}
                     />
                 )}
@@ -139,6 +152,13 @@ export const RegisterModal = (props: IRegisterModalProps) => {
                     />
                 )}
             />
+
+            {/* Error message */}
+            {error ? (
+                <MessageBar messageBarType={MessageBarType.warning}>
+                    {errorMessage}
+                </MessageBar>
+            ) : null}
 
             {/* Button Group */}
             <div className={styles.buttonGroup}>

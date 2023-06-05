@@ -110,15 +110,14 @@ public class AuthenticationController : ControllerBase
         var x = _registerValidator.Validate(model);
         if (!x.IsValid)
         {
-            return BadRequest(x.Errors.Where(x => x.ErrorMessage is not null));
+            return StatusCode(StatusCodes.Status400BadRequest, new Response { Status = "Error", Message = x.Errors[0].ErrorMessage ?? "An unknown error has occured. " });
         }
 
         //Check if user has already registered their e-mail address
         ApplicationUser emailExists = await _userManager.FindByEmailAsync(model.Email);
-        Console.WriteLine(emailExists);
         if (emailExists is not null)
         {
-            return BadRequest();
+            return StatusCode(StatusCodes.Status400BadRequest, new Response { Status = "Error", Message = "An account has already been registered for this e-mail address" });
         };
 
         //Create the user and save it to the DB 
@@ -133,7 +132,7 @@ public class AuthenticationController : ControllerBase
 
         if (!result.Succeeded)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+            return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "An unknown error has occured. Please try again later." });
         }
 
         //Generate a bearer token to send in the response body

@@ -15,7 +15,6 @@ public class LoginValidator : AbstractValidator<LoginModel>
         //Email
         RuleFor(x => x.Email)
              .NotEmpty()
-             .validEmail()
              .WithMessage("Email must not be empty");
 
     }
