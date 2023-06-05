@@ -29,9 +29,11 @@ export const Accordion = (props: IAccordionProps) => {
                 />
             </div>
 
-            <div className={styles.container}>
-                {!isContentDisplayed ? props.children : null}
-            </div>
+            {!isContentDisplayed ? (
+                <div className={styles.container}>
+                    {!isContentDisplayed ? props.children : null}
+                </div>
+            ) : null}
         </div>
     )
 }
