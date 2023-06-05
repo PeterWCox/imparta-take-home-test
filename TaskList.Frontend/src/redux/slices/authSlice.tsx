@@ -23,7 +23,6 @@ export const authSlice = createSlice({
             state.isLoading = action.payload
         },
         setToken: (state, action: PayloadAction<TokenDetails>) => {
-            console.log('setToken', action.payload)
             state.token = action.payload.token
             new TokenRepository_Cookie().setToken(action.payload)
         },
