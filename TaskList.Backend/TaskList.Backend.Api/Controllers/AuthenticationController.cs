@@ -63,6 +63,10 @@ public class AuthenticationController : ControllerBase
         var claims = decodedToken.Claims.ToList();
         var name = claims[0].Value;
         var user = await _userManager.FindByNameAsync(name);
+        if (user == null)
+        {
+            return Unauthorized();
+        }
 
         return Ok(new
         {
