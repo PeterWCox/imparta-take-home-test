@@ -3,5 +3,5 @@
 .taskList {
     display: flex;
     flex-direction: column;
-    row-gap: var(--spacing-7);
+    gap: 10px;
 }
