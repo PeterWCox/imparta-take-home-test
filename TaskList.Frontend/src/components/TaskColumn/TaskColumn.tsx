@@ -1,6 +1,7 @@
 import { Text } from '@fluentui/react'
 import { useState } from 'react'
-import { Status, Task } from '../../models/Task'
+import { Status } from '../../enums/Enums'
+import { Task } from '../../models/Task'
 import { ShowCompletedTasks } from '../ShowCompletedTasks/ShowCompletedTasks'
 import { TaskList } from '../TaskList/TaskList'
 import styles from './TaskColumn.module.css'
@@ -27,7 +28,9 @@ export const TaskColumn = (props: ITaskColumnProps) => {
 
             <div className={styles.tasksColumnContainer}>
                 {/* Incomplete tasks */}
-                <TaskList tasks={incompleteTasks} />
+                {incompleteTasks?.length > 0 ? (
+                    <TaskList tasks={incompleteTasks} />
+                ) : null}
 
                 {/* {isLoading
                     ? [...Array(5)].map((_, i) => <TaskCardLoading />)
@@ -46,7 +49,7 @@ export const TaskColumn = (props: ITaskColumnProps) => {
 
                 {/* Complete Tasks */}
                 {showCompletedTasks ? (
-                    <TaskList tasks={incompleteTasks} />
+                    <TaskList tasks={completedTasks} />
                 ) : null}
             </div>
         </div>

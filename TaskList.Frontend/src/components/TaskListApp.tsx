@@ -19,7 +19,7 @@ import { TokenRepository_Cookie } from '../repositories/TokenRepository'
 import { AddTask } from './AddTask/AddTask'
 import { LoginModal } from './LoginModal/LoginModal'
 import { RegisterModal } from './RegisterModal/RegisterModal'
-import { TaskColumn } from './TaskColumn/TaskColumn'
+import { TaskColumn as StatusColumn } from './TaskColumn/TaskColumn'
 import styles from './TaskListApp.module.css'
 
 export const TaskListApp = () => {
@@ -133,32 +133,35 @@ export const TaskListApp = () => {
                     {/* Tasks */}
                     <div className={styles.tasks}>
                         {/* Tasks List Name */}
-                        <Text variant="xLargePlus">Task List Name</Text>
+                        <Text variant="xLargePlus">My Tasks</Text>
 
                         <div className={styles.statusLists}>
-                            <TaskColumn
+                            <StatusColumn
                                 status={0}
                                 tasks={
                                     tasks?.filter(
                                         (t: Task) => t.status === 0
                                     ) ?? []
                                 }
+                                title={'Pending'}
                             />
-                            <TaskColumn
+                            <StatusColumn
                                 status={1}
                                 tasks={
                                     tasks?.filter(
                                         (t: Task) => t.status === 1
                                     ) ?? []
                                 }
+                                title={'In Progress'}
                             />
-                            <TaskColumn
+                            <StatusColumn
                                 status={2}
                                 tasks={
                                     tasks?.filter(
                                         (t: Task) => t.status === 2
                                     ) ?? []
                                 }
+                                title={'Completed'}
                             />
                         </div>
 
