@@ -6,6 +6,7 @@ import { TaskList } from '../TaskList/TaskList'
 import styles from './TaskColumn.module.css'
 
 export interface ITaskColumnProps {
+    title: string
     tasks: Task[]
     status: Status
 }
@@ -14,23 +15,19 @@ export const TaskColumn = (props: ITaskColumnProps) => {
     //States
     const [showCompletedTasks, setShowCompletedTasks] = useState(true)
 
-    //Hooks
-    const tasksByStatus = props.tasks.filter(
-        (t: any) => t.status === props.status
-    )
-    const incompleteTasks = tasksByStatus.filter((t: Task) => !t.isDone) || []
-    const completedTasks = tasksByStatus.filter((t: Task) => t.isDone) || []
+    const incompleteTasks = props.tasks.filter((t: Task) => !t.isDone) || []
+    const completedTasks = props.tasks.filter((t: Task) => t.isDone) || []
 
     return (
         <div className={styles.taskColumn}>
             {/* Status Title */}
-            <Text variant="xLarge">{`${props.status} (${incompleteTasks.length})`}</Text>
+            <Text variant="xLarge">{`${props.title} (${
+                props.tasks.filter((t) => !t.isDone).length
+            })`}</Text>
 
             <div className={styles.tasksColumnContainer}>
                 {/* Incomplete tasks */}
-                <TaskList
-                    tasks={tasksByStatus.filter((t: Task) => !t.isDone)}
-                />
+                <TaskList tasks={incompleteTasks} />
 
                 {/* {isLoading
                     ? [...Array(5)].map((_, i) => <TaskCardLoading />)
@@ -49,9 +46,7 @@ export const TaskColumn = (props: ITaskColumnProps) => {
 
                 {/* Complete Tasks */}
                 {showCompletedTasks ? (
-                    <TaskList
-                        tasks={tasksByStatus.filter((t: Task) => t.isDone)}
-                    />
+                    <TaskList tasks={incompleteTasks} />
                 ) : null}
             </div>
         </div>

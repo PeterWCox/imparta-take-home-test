@@ -32,4 +32,11 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    gap: 20px;
+}
+
+@media screen and (max-width: 80em) {
+    .statusLists {
+        flex-direction: column;
+    }
 }
