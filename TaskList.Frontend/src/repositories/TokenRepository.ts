@@ -1,22 +1,41 @@
+import { TokenDetails } from '../models/User'
+
 export interface ITokenRepository {
-    getToken(): string | null | undefined
-    setToken(token: string): void
+    getToken(): TokenDetails | null
+    setToken(tokenDetails: TokenDetails): void
+    deleteToken(): void
 }
 
 export class TokenRepository_Cookie implements ITokenRepository {
     private _cookieKey = 'tkn'
 
-    public getToken = (): string | null | undefined => {
+    public getToken = (): TokenDetails | null => {
         const token = document.cookie
             .split('; ')
             .find((row) => row.startsWith(this._cookieKey))
             ?.split('=')[1]
 
-        return token
+        //Get expiration data
+        const expiration = document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('exp'))
+            ?.split('=')[1]
+
+        console.log(token)
+        console.log(expiration)
+
+        if (!token || !expiration) {
+            return null
+        }
+
+        return {
+            token: token,
+            expiration: expiration,
+        }
     }
 
-    public setToken = (token: string): void => {
-        document.cookie = `${this._cookieKey}=${token}`
+    public setToken = (tokenDetails: TokenDetails): void => {
+        document.cookie = `${this._cookieKey}=${tokenDetails.token}; expires=${tokenDetails.expiration}; path=/;`
     }
 
     public deleteToken = (): void => {

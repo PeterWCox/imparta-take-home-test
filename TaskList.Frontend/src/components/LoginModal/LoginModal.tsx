@@ -55,8 +55,6 @@ export const LoginModal = (props: ILoginModalProps) => {
                 login()
             })}
         >
-            {password}
-
             {/* Username */}
             <Controller
                 control={control}

@@ -37,3 +37,8 @@ export type LoginResponseFailure = {
     //"00-67902dd48246df79c06ced83b71aaea7-0fdefac6bd84d626-00"
     traceId: string
 }
+
+export interface TokenDetails {
+    token: string
+    expiration: string
+}

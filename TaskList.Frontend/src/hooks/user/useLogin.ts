@@ -27,8 +27,15 @@ const useSignin = (request: LoginRequest) => {
                 )
 
                 //Set token if successful
-                if (response.data?.token) {
-                    dispatch(setToken(response.data.token))
+                if (response.data?.token && response.data?.expiration) {
+                    dispatch(
+                        setToken({
+                            token: response.data.token,
+                            expiration: new Date(
+                                response.data.expiration
+                            ).toString(),
+                        })
+                    )
                     navigate(0)
                 }
             } catch (error) {

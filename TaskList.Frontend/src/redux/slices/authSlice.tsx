@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
-import { User } from '../../models/User'
+import { TokenDetails, User } from '../../models/User'
 import { TokenRepository_Cookie } from '../../repositories/TokenRepository'
 
 export interface AuthSlice {
@@ -22,8 +22,9 @@ export const authSlice = createSlice({
         setLoading: (state, action: PayloadAction<boolean>) => {
             state.isLoading = action.payload
         },
-        setToken: (state, action: PayloadAction<string>) => {
-            state.token = action.payload
+        setToken: (state, action: PayloadAction<TokenDetails>) => {
+            console.log('setToken', action.payload)
+            state.token = action.payload.token
             new TokenRepository_Cookie().setToken(action.payload)
         },
         setUser: (state, action: PayloadAction<User>) => {

@@ -1,14 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
-import { useAppDispatch, useAppSelector } from '../../redux/hooks'
+import { useAppSelector } from '../../redux/hooks'
 import { RootState } from '../../redux/store'
 import { Constants } from '../../utils/Constants'
 
 const useTasks = () => {
     const { token } = useAppSelector((state: RootState) => state.auth)
-    const dispatch = useAppDispatch()
 
-    const { data: tasks } = useQuery({
+    const { data: tasks, isLoading } = useQuery({
         queryKey: ['tasks'],
         queryFn: async () => {
             try {
@@ -33,7 +32,7 @@ const useTasks = () => {
         enabled: !!token,
     })
 
-    return [tasks] as const
+    return [tasks, isLoading] as const
 }
 
 export default useTasks

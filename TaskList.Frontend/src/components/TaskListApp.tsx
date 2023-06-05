@@ -39,13 +39,13 @@ export const TaskListApp = () => {
 
     useEffect(() => {
         //On init - Try and get cached token
-        const token = new TokenRepository_Cookie().getToken()
+        const tokenDetails = new TokenRepository_Cookie().getToken()
 
-        if (!token) {
+        if (!tokenDetails) {
             return
         }
 
-        dispatch(setToken(token))
+        dispatch(setToken(tokenDetails))
     }, [])
 
     //Queries
@@ -95,48 +95,40 @@ export const TaskListApp = () => {
                 <div className={styles.container}>
                     {/* Tasklist Panel */}
                     <div className={styles.leftPanel}>
-                        {/* Register Button */}
-                        {!user ? (
-                            <PrimaryButton
-                                text="Register"
-                                onClick={handleRegisterButtonClick}
-                            />
-                        ) : null}
-
-                        {/* Persona */}
                         {user ? (
-                            <Persona
-                                // imageInitials={UserUtils.getInitials(user.name)}
-                                text={user.email}
-                                secondaryText={user.username}
-                                // tertiaryText={user.email}
-                                size={PersonaSize.size72}
-                                // imageAlt={user.name}
-                            />
-                        ) : null}
-
-                        {/* Signin/Signout Button */}
-                        {!user ? (
-                            <DefaultButton
-                                text="Sign in"
-                                onClick={handleSigninButtonClick}
-                            />
+                            <>
+                                <Persona
+                                    // imageInitials={UserUtils.getInitials(user.name)}
+                                    text={user.email}
+                                    secondaryText={user.username}
+                                    size={PersonaSize.size72}
+                                    imageAlt={user.username}
+                                />
+                                <DefaultButton
+                                    text="Sign out"
+                                    onClick={handleSignoutButtonClick}
+                                />
+                            </>
                         ) : (
-                            <DefaultButton
-                                text="Sign out"
-                                onClick={handleSignoutButtonClick}
-                            />
+                            <>
+                                <PrimaryButton
+                                    text="Register"
+                                    onClick={handleRegisterButtonClick}
+                                />
+                                <DefaultButton
+                                    text="Sign in"
+                                    onClick={handleSigninButtonClick}
+                                />
+                            </>
                         )}
 
                         {/* Searchbox */}
-                        <div>
-                            <SearchBox
-                                placeholder="Search tasks..."
-                                onChange={handleSearchboxChange}
-                                showIcon
-                                value={searchQuery ?? ''}
-                            />
-                        </div>
+                        <SearchBox
+                            placeholder="Search tasks..."
+                            onChange={handleSearchboxChange}
+                            showIcon
+                            value={searchQuery ?? ''}
+                        />
                     </div>
 
                     {/* Tasks */}
