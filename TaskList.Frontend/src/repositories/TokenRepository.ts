@@ -15,30 +15,21 @@ export class TokenRepository_Cookie implements ITokenRepository {
             .find((row) => row.startsWith(this._cookieKey))
             ?.split('=')[1]
 
-        //Get expiration data
-        const expiration = document.cookie
-            .split('; ')
-            .find((row) => row.startsWith('exp'))
-            ?.split('=')[1]
-
-        console.log(token)
-        console.log(expiration)
-
-        if (!token || !expiration) {
+        if (!token) {
             return null
         }
 
         return {
             token: token,
-            expiration: expiration,
+            expiration: '',
         }
     }
 
     public setToken = (tokenDetails: TokenDetails): void => {
-        document.cookie = `${this._cookieKey}=${tokenDetails.token}; expires=${tokenDetails.expiration}; path=/;`
+        document.cookie = `${this._cookieKey}=${tokenDetails.token}; expires=${tokenDetails.expiration}`
     }
 
     public deleteToken = (): void => {
-        document.cookie = `${this._cookieKey}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
+        document.cookie = `${this._cookieKey}=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`
     }
 }

@@ -40,7 +40,6 @@ export const TaskListApp = () => {
     useEffect(() => {
         //On init - Try and get cached token
         const tokenDetails = new TokenRepository_Cookie().getToken()
-
         if (!tokenDetails) {
             return
         }
