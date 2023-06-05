@@ -148,6 +148,10 @@ export const TaskCard = (props: ITaskCardProps) => {
                         e.preventDefault()
                         onTaskCardClick(e)
                     }}
+                    onClick={(e) => {
+                        e.preventDefault()
+                        onTaskCardClick(e)
+                    }}
                     className={`${styles.title} ${
                         props.task.isDone ? styles.done : null
                     }`}
