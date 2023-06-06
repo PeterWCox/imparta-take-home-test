@@ -1,16 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
-import { useAppDispatch, useAppSelector } from '../../redux/hooks'
-import { setUser } from '../../redux/slices/authSlice'
+import { useAppSelector } from '../../redux/hooks'
 import { RootState } from '../../redux/store'
 import { Constants } from '../../utils/Constants'
 
 const useUser = () => {
     //Redux
-    const dispatch = useAppDispatch()
     const { token } = useAppSelector((state: RootState) => state.auth)
 
-    const { isLoading: isUserLoading } = useQuery({
+    const { isLoading, data } = useQuery({
         queryKey: ['me'],
         queryFn: async () => {
             try {
@@ -22,10 +20,6 @@ const useUser = () => {
                         },
                     }
                 )
-
-                if (response.data) {
-                    dispatch(setUser(response.data))
-                }
 
                 return response.data
             } catch (error) {
@@ -42,7 +36,7 @@ const useUser = () => {
         enabled: !!token,
     })
 
-    return [isUserLoading] as const
+    return [data, isLoading] as const
 }
 
 export default useUser

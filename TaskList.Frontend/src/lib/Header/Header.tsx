@@ -10,15 +10,14 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { LoginModal } from '../../components/LoginModal/LoginModal'
 import { RegisterModal } from '../../components/RegisterModal/RegisterModal'
-import { useAppDispatch, useAppSelector } from '../../redux/hooks'
+import useUser from '../../hooks/user/useUser'
+import { useAppDispatch } from '../../redux/hooks'
 import { logout } from '../../redux/slices/authSlice'
-import { RootState } from '../../redux/store'
 import styles from './Header.module.css'
 
 export const Header = () => {
     //Redux
     const dispatch = useAppDispatch()
-    const { user } = useAppSelector((state: RootState) => state.auth)
 
     //States
     const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false)
@@ -26,6 +25,7 @@ export const Header = () => {
 
     //Hooks
     const navigate = useNavigate()
+    const [user] = useUser()
 
     //Handlers
     const handleSigninButtonClick = () => {
@@ -73,7 +73,6 @@ export const Header = () => {
                         {user ? (
                             <>
                                 <Persona
-                                    // imageInitials={UserUtils.getInitials(user.name)}
                                     text={user.email}
                                     secondaryText={user.username}
                                     size={PersonaSize.size32}

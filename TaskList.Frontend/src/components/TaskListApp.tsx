@@ -3,9 +3,8 @@ import { useEffect } from 'react'
 import useTasks from '../hooks/tasks/useTasks'
 import useUser from '../hooks/user/useUser'
 import { Task } from '../models/Task'
-import { useAppDispatch, useAppSelector } from '../redux/hooks'
+import { useAppDispatch } from '../redux/hooks'
 import { setToken } from '../redux/slices/authSlice'
-import { RootState } from '../redux/store'
 import { TokenRepository_Cookie } from '../repositories/TokenRepository'
 import { TaskColumn as StatusColumn } from './TaskColumn/TaskColumn'
 import styles from './TaskListApp.module.css'
@@ -13,7 +12,6 @@ import styles from './TaskListApp.module.css'
 export const TaskListApp = () => {
     //Redux
     const dispatch = useAppDispatch()
-    const { user } = useAppSelector((state: RootState) => state.auth)
 
     //Effects
     useEffect(() => {
@@ -28,7 +26,7 @@ export const TaskListApp = () => {
 
     //Queries
     const [tasks] = useTasks()
-    const [isUserLoading] = useUser()
+    const [user, isUserLoading] = useUser()
 
     return (
         <>

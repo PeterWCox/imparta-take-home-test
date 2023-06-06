@@ -44,7 +44,7 @@ export const RegisterModal = (props: IRegisterModalProps) => {
     })
 
     //Mutations
-    const [register, isLoading, error] = useRegister()
+    const [register, error, isLoading] = useRegister()
 
     //@ts-ignore
     const errorMessage = error?.message
@@ -78,7 +78,6 @@ export const RegisterModal = (props: IRegisterModalProps) => {
                         onChange={onChange}
                         onBlur={onBlur}
                         value={value}
-                        disabled={isLoading as boolean}
                         errorMessage={
                             errors.username && errors.username?.message
                         }
@@ -97,7 +96,6 @@ export const RegisterModal = (props: IRegisterModalProps) => {
                         onChange={onChange}
                         onBlur={onBlur}
                         value={value}
-                        disabled={isLoading as boolean}
                         errorMessage={errors.email && errors.email?.message}
                     />
                 )}

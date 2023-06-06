@@ -44,6 +44,8 @@ const useRegister = () => {
                     )
                     navigate(0)
                 }
+
+                return response.data
             } catch (error) {
                 const errorTS = error as any
                 const errorMessage: any = errorTS.response?.data.message
