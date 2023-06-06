@@ -48,34 +48,40 @@ public class AuthenticationController : ControllerBase
     [Route("me")]
     public async Task<IActionResult> Me()
     {
-        //Get bearer token from Headers as a string 
-        var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-
-        //Decode token to get the claims
-        var handler = new JwtSecurityTokenHandler();
-        var decodedToken = handler.ReadJwtToken(token);
-        if (decodedToken == null)
+        try
         {
-            return Unauthorized();
+            //Get bearer token from Headers as a string 
+            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            // Decode token to get the claims
+            var handler = new JwtSecurityTokenHandler();
+            var decodedToken = handler.ReadJwtToken(token);
+            if (decodedToken == null)
+            {
+                return Unauthorized();
+            }
+
+            //Get the email claim
+            var claims = decodedToken.Claims.ToList();
+            var name = claims[0].Value;
+            var user = await _userManager.FindByNameAsync(name);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            //Return the user
+            return Ok(new
+            {
+                user.Id,
+                user.UserName,
+                user.Email
+            });
         }
-
-        //Get the email claim
-        var claims = decodedToken.Claims.ToList();
-        var name = claims[0].Value;
-        var user = await _userManager.FindByNameAsync(name);
-        if (user == null)
+        catch (Exception e)
         {
-            return Unauthorized();
+            return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = e.Message });
         }
-
-        return Ok(new
-        {
-            user.Id,
-            user.UserName,
-            user.Email
-        });
-
-
     }
 
 
@@ -83,17 +89,102 @@ public class AuthenticationController : ControllerBase
     [Route("login")]
     public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
-        var x = _loginValidator.Validate(model);
-        if (!x.IsValid)
+        try
         {
-            return StatusCode(StatusCodes.Status400BadRequest, new Response { Status = "Error", Message = x.Errors[0].ErrorMessage ?? "An unknown error has occured. " });
+            var validationResult = _loginValidator.Validate(model);
+            if (!validationResult.IsValid)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, new Response
+                {
+                    Status = "Error",
+                    Message = validationResult.Errors[0].ErrorMessage ?? "An unknown error has occured. "
+                });
+            }
+
+            ApplicationUser user = await _userManager.FindByEmailAsync(model.Email);
+            bool isPasswordValid = await _userManager.CheckPasswordAsync(user, model.Password);
+
+            if (user != null && isPasswordValid)
+            {
+                var token = await GetToken(user);
+
+                return Ok(new
+                {
+                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    expiration = token.ValidTo
+                });
+            }
+
+            return StatusCode(StatusCodes.Status400BadRequest, new Response
+            {
+                Status = "Error",
+                Message = "Invalid username or password."
+            });
+
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new Response
+            {
+                Status = "Error",
+                Message = e.Message
+            });
         }
 
-        ApplicationUser user = await _userManager.FindByEmailAsync(model.Email);
-        bool isPasswordValid = await _userManager.CheckPasswordAsync(user, model.Password);
+    }
 
-        if (user != null && isPasswordValid)
+    [HttpPost]
+    [Route("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterModel model)
+    {
+        try
         {
+            //Ensure that the model is valid
+            var x = _registerValidator.Validate(model);
+            if (!x.IsValid)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, new Response { Status = "Error", Message = x.Errors[0].ErrorMessage ?? "An unknown error has occured. " });
+            }
+
+            //Check if user has already registered their e-mail address
+            ApplicationUser emailExists = await _userManager.FindByEmailAsync(model.Email);
+            if (emailExists is not null)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, new Response
+                {
+                    Status = "Error",
+                    Message = "An account has already been registered for this e-mail address"
+                });
+            };
+
+            //Check if user has already registered their user-name
+            ApplicationUser userNameExists = await _userManager.FindByNameAsync(model.Username);
+            if (userNameExists is not null)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, new Response
+                {
+                    Status = "Error",
+                    Message = "An account has already been registered for this username"
+                });
+            };
+
+            //Create the user and save it to the DB 
+            var user = new ApplicationUser()
+            {
+                Email = model.Email,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = model.Username
+            };
+
+            IdentityResult result = await _userManager.CreateAsync(user, model.Password);
+
+            if (!result.Succeeded)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "An unknown error has occured. Please try again later." });
+            }
+
+            //Generate a bearer token to send in the response body
+            ApplicationUser newUser = await _userManager.FindByEmailAsync(model.Email);
             var token = await GetToken(user);
 
             return Ok(new
@@ -102,69 +193,12 @@ public class AuthenticationController : ControllerBase
                 expiration = token.ValidTo
             });
         }
-
-        return StatusCode(StatusCodes.Status400BadRequest, new Response { Status = "Error", Message = "Invalid username or password." });
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = e.Message });
+        }
     }
 
-    [HttpPost]
-    [Route("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterModel model)
-    {
-        //Ensure that the model is valid
-        var x = _registerValidator.Validate(model);
-        if (!x.IsValid)
-        {
-            return StatusCode(StatusCodes.Status400BadRequest, new Response { Status = "Error", Message = x.Errors[0].ErrorMessage ?? "An unknown error has occured. " });
-        }
-
-        //Check if user has already registered their e-mail address
-        ApplicationUser emailExists = await _userManager.FindByEmailAsync(model.Email);
-        if (emailExists is not null)
-        {
-            return StatusCode(StatusCodes.Status400BadRequest, new Response
-            {
-                Status = "Error",
-                Message = "An account has already been registered for this e-mail address"
-            });
-        };
-
-        //Check if user has already registered their user-name
-        ApplicationUser userNameExists = await _userManager.FindByNameAsync(model.Username);
-        if (userNameExists is not null)
-        {
-            return StatusCode(StatusCodes.Status400BadRequest, new Response
-            {
-                Status = "Error",
-                Message = "An account has already been registered for this username"
-            });
-        };
-
-        //Create the user and save it to the DB 
-        var user = new ApplicationUser()
-        {
-            Email = model.Email,
-            SecurityStamp = Guid.NewGuid().ToString(),
-            UserName = model.Username
-        };
-
-        IdentityResult result = await _userManager.CreateAsync(user, model.Password);
-
-        if (!result.Succeeded)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "An unknown error has occured. Please try again later." });
-        }
-
-        //Generate a bearer token to send in the response body
-        ApplicationUser newUser = await _userManager.FindByEmailAsync(model.Email);
-        var token = await GetToken(user);
-
-        return Ok(new
-        {
-            token = new JwtSecurityTokenHandler().WriteToken(token),
-            expiration = token.ValidTo
-        });
-
-    }
 
     public async Task<JwtSecurityToken> GetToken(ApplicationUser user)
     {
