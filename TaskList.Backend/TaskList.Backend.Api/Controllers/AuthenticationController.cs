@@ -121,11 +121,26 @@ public class AuthenticationController : ControllerBase
         ApplicationUser emailExists = await _userManager.FindByEmailAsync(model.Email);
         if (emailExists is not null)
         {
-            return StatusCode(StatusCodes.Status400BadRequest, new Response { Status = "Error", Message = "An account has already been registered for this e-mail address" });
+            return StatusCode(StatusCodes.Status400BadRequest, new Response
+            {
+                Status = "Error",
+                Message = "An account has already been registered for this e-mail address"
+            });
+        };
+
+        //Check if user has already registered their user-name
+        ApplicationUser userNameExists = await _userManager.FindByNameAsync(model.Username);
+        if (userNameExists is not null)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new Response
+            {
+                Status = "Error",
+                Message = "An account has already been registered for this username"
+            });
         };
 
         //Create the user and save it to the DB 
-        ApplicationUser user = new ApplicationUser()
+        var user = new ApplicationUser()
         {
             Email = model.Email,
             SecurityStamp = Guid.NewGuid().ToString(),

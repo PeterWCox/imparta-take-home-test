@@ -86,6 +86,13 @@ public class TasksController : ControllerBase
             return BadRequest();
         }
 
+        //Validate the task
+        var validationResult = await _taskValidator.ValidateAsync(task);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(validationResult.Errors);
+        }
+
         _context.Entry(task).State = EntityState.Modified;
 
         try
