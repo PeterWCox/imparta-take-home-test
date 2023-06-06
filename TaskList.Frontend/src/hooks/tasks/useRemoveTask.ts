@@ -4,7 +4,7 @@ import { useAppSelector } from '../../redux/hooks'
 import { Constants } from '../../utils/Constants'
 import { QueryClientUtils } from '../../utils/QueryClientUtils'
 
-const useRemoveTask = (id: number) => {
+const useRemoveTask = () => {
     //Hooks
     const queryClient = useQueryClient()
     const token = useAppSelector((state) => state.auth.token)
@@ -13,7 +13,7 @@ const useRemoveTask = (id: number) => {
     const { mutateAsync: removeTask, error: removeTaskError } = useMutation(
         ['remove'],
         {
-            mutationFn: async () => {
+            mutationFn: async (id: number) => {
                 try {
                     await axios.delete(Constants.ApiUrl(`Tasks/${id}`), {
                         headers: {

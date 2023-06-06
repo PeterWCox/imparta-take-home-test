@@ -1,6 +1,6 @@
 import { DefaultButton, PrimaryButton, TextField } from '@fluentui/react'
 import { Panel } from '@fluentui/react/lib/Panel'
-import * as React from 'react'
+import { useState } from 'react'
 import useEditTask from '../../hooks/tasks/useEditTask'
 import useRemoveTask from '../../hooks/tasks/useRemoveTask'
 import { Task } from '../../models/Task'
@@ -14,11 +14,11 @@ export interface IEditTaskPanelProps {
 
 export const EditTaskPanel = (props: IEditTaskPanelProps) => {
     //States
-    const [updatedTask, setUpdatedTask] = React.useState(props.task)
+    const [updatedTask, setUpdatedTask] = useState(props.task)
 
     //Hooks
-    const [editTask] = useEditTask(updatedTask)
-    const [removeTask] = useRemoveTask(props.task.id)
+    const [editTask] = useEditTask()
+    const [removeTask] = useRemoveTask()
 
     const onRenderFooterContent = () => (
         <div className={styles.buttonGroup}>
@@ -26,7 +26,7 @@ export const EditTaskPanel = (props: IEditTaskPanelProps) => {
             <DefaultButton
                 text="Delete"
                 onClick={() => {
-                    removeTask()
+                    removeTask(props.task.id)
                     props.onDismiss()
                 }}
                 style={{
@@ -40,7 +40,7 @@ export const EditTaskPanel = (props: IEditTaskPanelProps) => {
             <PrimaryButton
                 text="Save"
                 onClick={() => {
-                    editTask()
+                    editTask(updatedTask)
                     props.onDismiss()
                 }}
             />
@@ -70,7 +70,9 @@ export const EditTaskPanel = (props: IEditTaskPanelProps) => {
                     }}
                     onKeyDown={(e) => {
                         if (e.key === 'Enter' && updatedTask.title.length > 0) {
-                            editTask()
+                            editTask({
+                                ...updatedTask,
+                            })
                             props.onDismiss()
                         }
                     }}

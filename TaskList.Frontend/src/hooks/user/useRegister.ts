@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { RegistrationRequest } from '../../models/User'
 import { useAppDispatch } from '../../redux/hooks'
 import { setToken } from '../../redux/slices/authSlice'
 import { Constants } from '../../utils/Constants'
@@ -11,12 +12,9 @@ export interface RegisterRequest {
     password: string
 }
 
-const useRegister = (request: RegisterRequest | null) => {
+const useRegister = () => {
     //Redux
     const dispatch = useAppDispatch()
-
-    //q: How do I unstage last commit
-    //a: git reset --soft HEAD~1
 
     //Routing
     const navigate = useNavigate()
@@ -26,8 +24,8 @@ const useRegister = (request: RegisterRequest | null) => {
         mutateAsync: register,
         error,
         isLoading,
-    } = useMutation([request], {
-        mutationFn: async () => {
+    } = useMutation([], {
+        mutationFn: async (request: RegistrationRequest) => {
             try {
                 const response = await axios.post(
                     Constants.ApiUrl(`Authentication/Register`),

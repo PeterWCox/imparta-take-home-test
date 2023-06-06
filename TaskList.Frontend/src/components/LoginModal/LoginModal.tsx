@@ -1,7 +1,6 @@
 import { MessageBar, MessageBarType, TextField } from '@fluentui/react'
 import { PrimaryButton } from '@fluentui/react/lib/Button'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import useLogin from '../../hooks/user/useLogin'
@@ -23,10 +22,6 @@ const validationSchema = z.object({
 type ValidationSchema = z.infer<typeof validationSchema>
 
 export const LoginModal = (props: ILoginModalProps) => {
-    //States
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-
     //React-Hook-Form
     const {
         handleSubmit,
@@ -38,10 +33,7 @@ export const LoginModal = (props: ILoginModalProps) => {
     })
 
     //Hooks
-    const [login, error, isLoading] = useLogin({
-        email,
-        password,
-    })
+    const [login, error, isLoading] = useLogin()
 
     //@ts-ignore
     const errorMessage = error?.message
@@ -52,9 +44,10 @@ export const LoginModal = (props: ILoginModalProps) => {
             isModalOpen={props.isModalOpen}
             hideModal={props.hideModal}
             onSubmit={handleSubmit((data) => {
-                setEmail(data.Email)
-                setPassword(data.Password)
-                login()
+                login({
+                    email: data.Email,
+                    password: data.Password,
+                })
                 if (error) return
                 reset({
                     Password: '',

@@ -1,28 +1,26 @@
 import { MessageBar, MessageBarType, TextField } from '@fluentui/react'
 import { PrimaryButton } from '@fluentui/react/lib/Button'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import useRegister from '../../hooks/user/useRegister'
 import { ModalForm } from '../../lib/ModalForm/ModalForm'
-import { RegistrationRequest } from '../../models/User'
 import styles from './RegisterModal.module.css'
 
 const validationSchema = z
     .object({
-        Username: z.string().min(1, { message: 'Username is required' }),
-        Email: z.string().min(1, { message: 'Email is required' }).email({
+        username: z.string().min(1, { message: 'Username is required' }),
+        email: z.string().min(1, { message: 'Email is required' }).email({
             message: 'Must be a valid email',
         }),
-        Password: z
+        password: z
             .string()
             .min(6, { message: 'Password must be atleast 6 characters' }),
-        ConfirmPassword: z
+        confirmPassword: z
             .string()
             .min(6, { message: 'Password must be atleast 6 characters' }),
     })
-    .refine((data) => data.Password === data.ConfirmPassword, {
+    .refine((data) => data.password === data.confirmPassword, {
         path: ['ConfirmPassword'],
         message: "Passwords don't match",
     })
@@ -35,10 +33,6 @@ export interface IRegisterModalProps {
 }
 
 export const RegisterModal = (props: IRegisterModalProps) => {
-    //States
-    const [registrationRequest, setRegistrationRequest] =
-        useState<RegistrationRequest | null>(null)
-
     //React-Hook-Form
     const {
         handleSubmit,
@@ -50,7 +44,7 @@ export const RegisterModal = (props: IRegisterModalProps) => {
     })
 
     //Mutations
-    const [register, isLoading, error] = useRegister(registrationRequest)
+    const [register, isLoading, error] = useRegister()
 
     //@ts-ignore
     const errorMessage = error?.message
@@ -61,15 +55,14 @@ export const RegisterModal = (props: IRegisterModalProps) => {
             isModalOpen={props.isModalOpen}
             hideModal={props.hideModal}
             onSubmit={handleSubmit((data) => {
-                setRegistrationRequest({
-                    username: data.Username,
-                    password: data.Password,
-                    email: data.Email,
+                register({
+                    username: data.username,
+                    password: data.password,
+                    email: data.email,
                 })
-                register()
                 if (!error) {
                     reset({
-                        Username: '',
+                        username: '',
                     })
                 }
             })}
@@ -77,7 +70,7 @@ export const RegisterModal = (props: IRegisterModalProps) => {
             {/* Username */}
             <Controller
                 control={control}
-                name="Username"
+                name="username"
                 render={({ field: { onChange, onBlur, value } }) => (
                     <TextField
                         id="Username"
@@ -87,7 +80,7 @@ export const RegisterModal = (props: IRegisterModalProps) => {
                         value={value}
                         disabled={isLoading as boolean}
                         errorMessage={
-                            errors.Username && errors.Username?.message
+                            errors.username && errors.username?.message
                         }
                     />
                 )}
@@ -96,7 +89,7 @@ export const RegisterModal = (props: IRegisterModalProps) => {
             {/* Email */}
             <Controller
                 control={control}
-                name="Email"
+                name="email"
                 render={({ field: { onChange, onBlur, value } }) => (
                     <TextField
                         id="Email"
@@ -105,7 +98,7 @@ export const RegisterModal = (props: IRegisterModalProps) => {
                         onBlur={onBlur}
                         value={value}
                         disabled={isLoading as boolean}
-                        errorMessage={errors.Email && errors.Email?.message}
+                        errorMessage={errors.email && errors.email?.message}
                     />
                 )}
             />
@@ -113,7 +106,7 @@ export const RegisterModal = (props: IRegisterModalProps) => {
             {/* Password */}
             <Controller
                 control={control}
-                name="Password"
+                name="password"
                 render={({ field: { onChange, onBlur, value } }) => (
                     <TextField
                         id="Password"
@@ -125,7 +118,7 @@ export const RegisterModal = (props: IRegisterModalProps) => {
                         onBlur={onBlur}
                         value={value}
                         errorMessage={
-                            errors.Password && errors.Password?.message
+                            errors.password && errors.password?.message
                         }
                     />
                 )}
@@ -134,7 +127,7 @@ export const RegisterModal = (props: IRegisterModalProps) => {
             {/* Confirm password */}
             <Controller
                 control={control}
-                name="ConfirmPassword"
+                name="confirmPassword"
                 render={({ field: { onChange, onBlur, value } }) => (
                     <TextField
                         id="ConfirmPassword"
@@ -146,8 +139,8 @@ export const RegisterModal = (props: IRegisterModalProps) => {
                         onBlur={onBlur}
                         value={value}
                         errorMessage={
-                            errors.ConfirmPassword &&
-                            errors.ConfirmPassword?.message
+                            errors.confirmPassword &&
+                            errors.confirmPassword?.message
                         }
                     />
                 )}

@@ -6,8 +6,10 @@ import {
 } from '@fluentui/react'
 import { useBoolean } from '@fluentui/react-hooks'
 import { useCallback, useRef, useState } from 'react'
-import useAddTask from '../../hooks/tasks/useAddTask'
-import useEditTask from '../../hooks/tasks/useEditTask'
+import {
+    default as useAddTask,
+    default as useEditTask,
+} from '../../hooks/tasks/useEditTask'
 import useRemoveTask from '../../hooks/tasks/useRemoveTask'
 import { Task } from '../../models/Task'
 import { EditTaskPanel } from '../EditTaskPanel/EditTaskPanel'
@@ -21,27 +23,22 @@ export const TaskCard = (props: ITaskCardProps) => {
     //States
     const [isOpen, { setTrue: openPanel, setFalse: dismissPanel }] =
         useBoolean(false)
-    const [updatedTodo, setUpdatedTodo] = useState<Task>(props.task)
     const [showContextualMenu, setShowContextualMenu] = useState<boolean>(false)
-    const [title, setTitle] = useState<string>(props.task.title)
 
     //Refs
     const linkRef = useRef(null)
 
     //Hooks
-    const [add] = useAddTask({
-        title: title,
-    })
-    const [edit] = useEditTask(updatedTodo)
-    const [remove] = useRemoveTask(props.task.id)
+    const [add] = useAddTask()
+    const [edit] = useEditTask()
+    const [remove] = useRemoveTask()
 
     //Handlers
     const onCheckboxClick = useCallback(() => {
-        setUpdatedTodo({
+        edit({
             ...props.task,
             isDone: !props.task.isDone,
         })
-        edit()
     }, [props.task])
 
     const onTaskCardClick = useCallback((ev: React.MouseEvent<HTMLElement>) => {
@@ -72,11 +69,9 @@ export const TaskCard = (props: ITaskCardProps) => {
                         iconProps: { iconName: 'Timer' },
                         text: 'Pending',
                         onClick: () => {
-                            setUpdatedTodo({
-                                ...props.task,
+                            edit({
                                 status: 0,
                             })
-                            edit()
                         },
                     },
                     {
@@ -84,11 +79,9 @@ export const TaskCard = (props: ITaskCardProps) => {
                         iconProps: { iconName: 'TimelineDelivery' },
                         text: 'In Progress',
                         onClick: () => {
-                            setUpdatedTodo({
-                                ...props.task,
+                            edit({
                                 status: 1,
                             })
-                            edit()
                         },
                     },
                     {
@@ -96,11 +89,9 @@ export const TaskCard = (props: ITaskCardProps) => {
                         iconProps: { iconName: 'CompletedSolid' },
                         text: 'Completed',
                         onClick: () => {
-                            setUpdatedTodo({
-                                ...props.task,
+                            edit({
                                 status: 2,
                             })
-                            edit()
                         },
                     },
                 ],
@@ -110,13 +101,16 @@ export const TaskCard = (props: ITaskCardProps) => {
             key: 'delete',
             iconProps: { iconName: 'Delete' },
             text: 'Delete',
-            onClick: () => remove(),
+            onClick: () => remove(props.task.id),
         },
         {
             key: 'duplicate',
             iconProps: { iconName: 'Copy' },
             text: 'Copy',
-            onClick: () => add(),
+            onClick: () =>
+                add({
+                    title: props.task.title,
+                }),
         },
     ]
 

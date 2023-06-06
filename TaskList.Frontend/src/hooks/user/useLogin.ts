@@ -10,7 +10,7 @@ export interface LoginRequest {
     password: string
 }
 
-const useSignin = (request: LoginRequest) => {
+const useSignin = () => {
     //Routing
     const navigate = useNavigate()
 
@@ -23,7 +23,7 @@ const useSignin = (request: LoginRequest) => {
         error,
         isLoading,
     } = useMutation(['signin'], {
-        mutationFn: async () => {
+        mutationFn: async (request: LoginRequest) => {
             try {
                 const response = await axios.post(
                     Constants.ApiUrl(`Authentication/Login`),

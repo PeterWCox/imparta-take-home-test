@@ -1,6 +1,5 @@
 import { PrimaryButton, TextField } from '@fluentui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Status } from '../../enums/Enums'
@@ -8,7 +7,7 @@ import useAddTask from '../../hooks/tasks/useAddTask'
 import styles from './AddTask.module.css'
 
 const validationSchema = z.object({
-    Title: z
+    title: z
         .string()
         .nonempty({ message: 'Task name is required' })
         .max(100, { message: 'Task name must be less than 100 characters' }),
@@ -21,9 +20,6 @@ export interface IAddTaskProps {
 }
 
 export const AddTask = (props: IAddTaskProps) => {
-    //States
-    const [taskName, setTaskName] = useState<string>('')
-
     //React-Hook-Form
     const {
         handleSubmit,
@@ -35,32 +31,31 @@ export const AddTask = (props: IAddTaskProps) => {
     })
 
     //Hooks
-    const [addTask] = useAddTask({
-        title: taskName,
-        status: props.status,
-    })
+    const [addTask] = useAddTask()
 
     return (
         <form
             className={styles.addTask}
             onSubmit={handleSubmit((data) => {
-                setTaskName(data.Title)
-                addTask()
+                addTask({
+                    title: data.title,
+                    status: props.status,
+                })
                 reset({
-                    Title: '',
+                    title: '',
                 })
             })}
         >
             <Controller
                 control={control}
-                name="Title"
+                name="title"
                 render={({ field: { onChange, onBlur, value } }) => (
                     <TextField
                         id="Add Task"
                         onChange={onChange}
                         onBlur={onBlur}
                         value={value}
-                        errorMessage={errors.Title && errors.Title?.message}
+                        errorMessage={errors.title && errors.title?.message}
                     />
                 )}
             />

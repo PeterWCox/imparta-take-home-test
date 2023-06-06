@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
-import { Task } from '../../models/Task'
+import { PartialTask } from '../../models/Task'
 import { useAppSelector } from '../../redux/hooks'
 import { Constants } from '../../utils/Constants'
 import { QueryClientUtils } from '../../utils/QueryClientUtils'
 
-const useEditTask = (task: Task) => {
+const useEditTask = () => {
     //Hooks
     const queryClient = useQueryClient()
     const token = useAppSelector((state) => state.auth.token)
@@ -14,7 +14,7 @@ const useEditTask = (task: Task) => {
     const { mutateAsync: editTask, error: editTaskError } = useMutation(
         ['edit'],
         {
-            mutationFn: async () => {
+            mutationFn: async (task: PartialTask) => {
                 try {
                     await axios.put(
                         Constants.ApiUrl(`Tasks/${task.id}`),

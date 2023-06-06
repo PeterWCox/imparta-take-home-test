@@ -8,9 +8,6 @@ import { QueryClientUtils } from '../../utils/QueryClientUtils'
 const useTasks = () => {
     const { token } = useAppSelector((state: RootState) => state.auth)
 
-    const url = Constants.ApiUrl(`Tasks`)
-    console.log('url', url)
-
     const { data: tasks, isLoading } = useQuery({
         queryKey: [QueryClientUtils.TASKS_QUERY_KEY],
         queryFn: async () => {
