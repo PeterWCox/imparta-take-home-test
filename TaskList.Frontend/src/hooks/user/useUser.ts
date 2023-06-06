@@ -15,7 +15,7 @@ const useUser = () => {
         queryFn: async () => {
             try {
                 const response = await axios.get(
-                    `${Constants.BASE_URL}Authentication/me`,
+                    Constants.ApiUrl('Authentication/me'),
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

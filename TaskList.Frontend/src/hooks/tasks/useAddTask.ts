@@ -14,7 +14,7 @@ const useAddTask = (task: PartialTask) => {
     const { mutateAsync: addTask } = useMutation(['task'], {
         mutationFn: async () => {
             try {
-                await axios.post(`${Constants.BASE_URL}Tasks`, task, {
+                await axios.post(Constants.ApiUrl('Tasks'), task, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

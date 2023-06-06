@@ -30,7 +30,7 @@ const useRegister = (request: RegisterRequest | null) => {
         mutationFn: async () => {
             try {
                 const response = await axios.post(
-                    `${Constants.BASE_URL}Authentication/Register`,
+                    Constants.ApiUrl(`Authentication/Register`),
                     request
                 )
 

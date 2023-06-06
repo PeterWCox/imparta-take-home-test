@@ -24,3 +24,4 @@ TaskList.Backend/TaskListBackend.Api/obj
 TaskList.Backend/.vs
 **/bin
 **/obj
+TaskList.Frontend/.env

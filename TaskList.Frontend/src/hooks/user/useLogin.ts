@@ -26,7 +26,7 @@ const useSignin = (request: LoginRequest) => {
         mutationFn: async () => {
             try {
                 const response = await axios.post(
-                    `${Constants.BASE_URL}Authentication/Login`,
+                    Constants.ApiUrl(`Authentication/Login`),
                     request
                 )
 

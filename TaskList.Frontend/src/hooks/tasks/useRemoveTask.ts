@@ -15,7 +15,7 @@ const useRemoveTask = (id: number) => {
         {
             mutationFn: async () => {
                 try {
-                    await axios.delete(`${Constants.BASE_URL}Tasks/${id}`, {
+                    await axios.delete(Constants.ApiUrl(`Tasks/${id}`), {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },

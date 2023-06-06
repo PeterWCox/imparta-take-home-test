@@ -17,7 +17,7 @@ const useEditTask = (task: Task) => {
             mutationFn: async () => {
                 try {
                     await axios.put(
-                        `${Constants.BASE_URL}Tasks/${task.id}`,
+                        Constants.ApiUrl(`Tasks/${task.id}`),
                         task,
                         {
                             headers: {

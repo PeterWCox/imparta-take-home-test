@@ -3,15 +3,19 @@ import axios, { AxiosError } from 'axios'
 import { useAppSelector } from '../../redux/hooks'
 import { RootState } from '../../redux/store'
 import { Constants } from '../../utils/Constants'
+import { QueryClientUtils } from '../../utils/QueryClientUtils'
 
 const useTasks = () => {
     const { token } = useAppSelector((state: RootState) => state.auth)
 
+    const url = Constants.ApiUrl(`Tasks`)
+    console.log('url', url)
+
     const { data: tasks, isLoading } = useQuery({
-        queryKey: ['tasks'],
+        queryKey: [QueryClientUtils.TASKS_QUERY_KEY],
         queryFn: async () => {
             try {
-                const response = await axios.get(`${Constants.BASE_URL}Tasks`, {
+                const response = await axios.get(Constants.ApiUrl(`Tasks`), {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
