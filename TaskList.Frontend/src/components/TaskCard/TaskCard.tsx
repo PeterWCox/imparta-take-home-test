@@ -5,7 +5,7 @@ import {
     Text,
 } from '@fluentui/react'
 import { useBoolean } from '@fluentui/react-hooks'
-import React, { useCallback, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import useAddTask from '../../hooks/tasks/useAddTask'
 import useEditTask from '../../hooks/tasks/useEditTask'
 import useRemoveTask from '../../hooks/tasks/useRemoveTask'
@@ -22,7 +22,7 @@ export const TaskCard = (props: ITaskCardProps) => {
     const [isOpen, { setTrue: openPanel, setFalse: dismissPanel }] =
         useBoolean(false)
     const [updatedTodo, setUpdatedTodo] = useState<Task>(props.task)
-    const [showContextualMenu, setShowContextualMenu] = React.useState(false)
+    const [showContextualMenu, setShowContextualMenu] = useState<boolean>(false)
     const [title, setTitle] = useState<string>(props.task.title)
 
     //Refs
