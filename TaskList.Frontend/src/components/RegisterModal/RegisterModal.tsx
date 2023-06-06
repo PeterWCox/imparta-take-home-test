@@ -163,7 +163,7 @@ export const RegisterModal = (props: IRegisterModalProps) => {
             {/* Button Group */}
             <div className={styles.buttonGroup}>
                 <PrimaryButton
-                    text="Registering..."
+                    text="Register"
                     type="submit"
                     disabled={Object.keys(errors).length > 0}
                 />
