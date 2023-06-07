@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System;
 using System.Text;
 using TaskList.Backend.Api.Authentication;
@@ -21,6 +22,11 @@ public class Startup
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
+
+        //Serilog configuration
+        Log.Logger = new LoggerConfiguration()
+        .ReadFrom.Configuration(configuration)
+        .CreateLogger();
     }
 
     public IConfiguration Configuration { get; }
@@ -47,6 +53,8 @@ public class Startup
         services.AddScoped<IValidator<LoginModel>, LoginValidator>();
         services.AddScoped<IValidator<RegisterModel>, RegisterValidator>();
         services.AddScoped<IValidator<TaskModel>, TaskValidator>();
+        services.AddScoped<IValidator<TaskListModel>, TaskListValidator>();
+
 
         services.AddAuthentication(options =>
         {
@@ -81,6 +89,10 @@ public class Startup
 
         });
 
+        services.AddControllers().AddNewtonsoftJson(options =>
+            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+);
+
 
     }
 
@@ -101,6 +113,8 @@ public class Startup
         app.UseRouting();
 
         app.UseAuthorization();
+
+        app.UseSerilogRequestLogging();
 
         app.UseEndpoints(endpoints =>
         {
