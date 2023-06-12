@@ -54,6 +54,8 @@ public class Startup
         services.AddScoped<IValidator<RegisterModel>, RegisterValidator>();
         services.AddScoped<IValidator<TaskModel>, TaskValidator>();
         services.AddScoped<IValidator<TaskListModel>, TaskListValidator>();
+        services.AddScoped<IValidator<SubTaskModel>, SubTaskValidator>();
+
 
 
         services.AddAuthentication(options =>
@@ -91,7 +93,7 @@ public class Startup
 
         services.AddControllers().AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-);
+        );
 
 
     }
@@ -114,7 +116,7 @@ public class Startup
 
         app.UseAuthorization();
 
-        app.UseSerilogRequestLogging();
+
 
         app.UseEndpoints(endpoints =>
         {

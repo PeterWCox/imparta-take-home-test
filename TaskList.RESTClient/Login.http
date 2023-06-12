@@ -1,0 +1,14 @@
+
+# ********** LOGIN ************ # 
+@baseUrl = http://localhost:5000/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoicGV0ZXJjb3giLCJqdGkiOiI3ZWRhZmVlNC1kMTFlLTQ0YjYtYjc4Ni0zNGZmYWQ1N2Y3MzAiLCJleHAiOjE2ODY2MDI2NDQsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6MjQyODgiLCJhdWQiOiJodHRwOiAvL2xvY2FsaG9zdDo0MjAwIn0.ONuL4xWnkdn3aHxlBe-GvPV86-riWShyVYpQPvm4iX0
+
+###  LOGIN
+POST {{baseUrl}}/login
+content-type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "email": "p.cox@outlook.com",
+    "password": "Password123!"
+}

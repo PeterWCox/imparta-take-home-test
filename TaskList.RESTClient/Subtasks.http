@@ -1,0 +1,33 @@
+
+# ********** SUBTASKS ************ # 
+
+###  GET SUBTASKS
+GET http://localhost:5000/api/tasklists/1/tasks/3/subtasks 
+content-type: application/json
+
+### GET SUBTASK BY ID
+GET http://localhost:5000/api/tasklists/1/tasks/3/subtasks/1 
+content-type: application/json
+
+### CREATE SUBTASK
+POST http://localhost:5000/api/tasklists/1/tasks/3/subtasks 
+content-type: application/json
+
+{
+	"title": "Subtask #1",
+}
+
+### UPDATE SUBTASK
+PUT http://localhost:5000/api/tasklists/1/tasks/3/subtasks/2 
+content-type: application/json
+
+{
+	"id": 2,
+	"title": "UPDATED TASK",
+	"completed": true
+}
+
+### DELETE SUBTASK
+DELETE http://localhost:5000/api/tasklists/1/tasks/3/subtasks/1 
+
+

@@ -12,8 +12,8 @@ using TaskList.Backend.Api.Models;
 namespace TaskList.Backend.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230604232230_Init")]
-    partial class Init
+    [Migration("20230609110754_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -222,7 +222,7 @@ namespace TaskList.Backend.Api.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("TaskList.Backend.Api.Models.TaskModel", b =>
+            modelBuilder.Entity("TaskList.Backend.Api.Models.SubTaskModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -231,10 +231,65 @@ namespace TaskList.Backend.Api.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<bool>("IsDone")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("TaskId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TaskId");
+
+                    b.ToTable("SubTaskModel");
+                });
+
+            modelBuilder.Entity("TaskList.Backend.Api.Models.TaskListModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TaskLists");
+                });
+
+            modelBuilder.Entity("TaskList.Backend.Api.Models.TaskModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDone")
                         .HasMaxLength(1)
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsImportant")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsMyDay")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TaskListId")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -243,6 +298,8 @@ namespace TaskList.Backend.Api.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TaskListId");
 
                     b.ToTable("Tasks");
                 });
@@ -296,6 +353,38 @@ namespace TaskList.Backend.Api.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("TaskList.Backend.Api.Models.SubTaskModel", b =>
+                {
+                    b.HasOne("TaskList.Backend.Api.Models.TaskModel", "Task")
+                        .WithMany("SubTasks")
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Task");
+                });
+
+            modelBuilder.Entity("TaskList.Backend.Api.Models.TaskModel", b =>
+                {
+                    b.HasOne("TaskList.Backend.Api.Models.TaskListModel", "TaskList")
+                        .WithMany("Tasks")
+                        .HasForeignKey("TaskListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TaskList");
+                });
+
+            modelBuilder.Entity("TaskList.Backend.Api.Models.TaskListModel", b =>
+                {
+                    b.Navigation("Tasks");
+                });
+
+            modelBuilder.Entity("TaskList.Backend.Api.Models.TaskModel", b =>
+                {
+                    b.Navigation("SubTasks");
                 });
 #pragma warning restore 612, 618
         }

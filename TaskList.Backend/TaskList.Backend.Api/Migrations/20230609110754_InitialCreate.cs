@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TaskList.Backend.Api.Migrations
 {
-    public partial class Init : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -49,18 +49,16 @@ namespace TaskList.Backend.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tasks",
+                name: "TaskLists",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    IsDone = table.Column<bool>(type: "bit", maxLength: 1, nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false)
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tasks", x => x.Id);
+                    table.PrimaryKey("PK_TaskLists", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -169,6 +167,53 @@ namespace TaskList.Backend.Api.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Tasks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    IsDone = table.Column<bool>(type: "bit", maxLength: 1, nullable: false),
+                    IsMyDay = table.Column<bool>(type: "bit", nullable: false),
+                    IsImportant = table.Column<bool>(type: "bit", nullable: false),
+                    DueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TaskListId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tasks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Tasks_TaskLists_TaskListId",
+                        column: x => x.TaskListId,
+                        principalTable: "TaskLists",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SubTaskModel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDone = table.Column<bool>(type: "bit", nullable: false),
+                    TaskId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SubTaskModel", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SubTaskModel_Tasks_TaskId",
+                        column: x => x.TaskId,
+                        principalTable: "Tasks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -207,6 +252,16 @@ namespace TaskList.Backend.Api.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubTaskModel_TaskId",
+                table: "SubTaskModel",
+                column: "TaskId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tasks_TaskListId",
+                table: "Tasks",
+                column: "TaskListId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -227,13 +282,19 @@ namespace TaskList.Backend.Api.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Tasks");
+                name: "SubTaskModel");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Tasks");
+
+            migrationBuilder.DropTable(
+                name: "TaskLists");
         }
     }
 }

@@ -3,7 +3,7 @@ import { PrimaryButton } from '@fluentui/react/lib/Button'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
-import useLogin from '../../hooks/user/useLogin'
+import useLogin from '../../hooks/login/useLogin'
 import { ModalForm } from '../../lib/ModalForm/ModalForm'
 import styles from './LoginModal.module.css'
 

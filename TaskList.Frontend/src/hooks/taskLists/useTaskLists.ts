@@ -5,15 +5,15 @@ import { RootState } from '../../redux/store'
 import { Constants } from '../../utils/Constants'
 import { QueryClientUtils } from '../../utils/QueryClientUtils'
 
-const useTasks = () => {
+const useTaskLists = () => {
     const { token } = useAppSelector((state: RootState) => state.auth)
 
-    const { data: tasks, isLoading } = useQuery({
+    const { data: taskLists, isLoading: isTaskListsLoading } = useQuery({
         queryKey: [QueryClientUtils.TASKS_QUERY_KEY],
         queryFn: async () => {
             try {
                 const response = await axios.get(
-                    Constants.ApiUrl(`TaskLists/4/Tasks`),
+                    Constants.ApiUrl(`TaskLists`),
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -21,7 +21,7 @@ const useTasks = () => {
                     }
                 )
 
-                console.log('TASKS', response.data)
+                console.log(response.data)
 
                 return response.data
             } catch (error) {
@@ -38,7 +38,7 @@ const useTasks = () => {
         // enabled: !!token,
     })
 
-    return [tasks, isLoading] as const
+    return [taskLists, isTaskListsLoading] as const
 }
 
-export default useTasks
+export default useTaskLists

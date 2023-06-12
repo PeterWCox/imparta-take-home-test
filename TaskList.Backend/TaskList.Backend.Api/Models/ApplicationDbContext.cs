@@ -11,7 +11,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
     }
 
+    public DbSet<TaskListModel> TaskLists { get; set; }
     public DbSet<TaskModel> Tasks { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

@@ -13,7 +13,7 @@ const useUser = () => {
         queryFn: async () => {
             try {
                 const response = await axios.get(
-                    Constants.ApiUrl('Authentication/me'),
+                    Constants.ApiUrl('User'),
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

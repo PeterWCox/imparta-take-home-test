@@ -28,7 +28,7 @@ const useRegister = () => {
         mutationFn: async (request: RegistrationRequest) => {
             try {
                 const response = await axios.post(
-                    Constants.ApiUrl(`Authentication/Register`),
+                    Constants.ApiUrl(`Session`),
                     request
                 )
 

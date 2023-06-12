@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +7,6 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,80 +17,32 @@ namespace TaskList.Backend.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class AuthenticationController : ControllerBase
+public class RegistrationController : ControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IConfiguration _configuration;
-    private readonly IValidator<LoginModel> _loginValidator;
     private readonly IValidator<RegisterModel> _registerValidator;
 
 
-    public AuthenticationController(
+    public RegistrationController(
         UserManager<ApplicationUser> userManager,
-        RoleManager<IdentityRole> roleManager,
         IConfiguration configuration,
-        IValidator<LoginModel> loginValidator,
-        IValidator<LoginModel> validator,
         IValidator<RegisterModel> registerValidator
     )
     {
         _userManager = userManager;
-        _roleManager = roleManager;
         _configuration = configuration;
-        _loginValidator = loginValidator;
         _registerValidator = registerValidator;
     }
 
-    // GET: api/Authentication/me
-    [HttpGet]
-    [Route("me")]
-    public async Task<IActionResult> Me()
-    {
-        try
-        {
-            //Get bearer token from Headers as a string 
-            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-
-            // Decode token to get the claims
-            var handler = new JwtSecurityTokenHandler();
-            var decodedToken = handler.ReadJwtToken(token);
-            if (decodedToken == null)
-            {
-                return Unauthorized();
-            }
-
-            //Get the email claim
-            var claims = decodedToken.Claims.ToList();
-            var name = claims[0].Value;
-            var user = await _userManager.FindByNameAsync(name);
-            if (user == null)
-            {
-                return Unauthorized();
-            }
-
-            //Return the user
-            return Ok(new
-            {
-                user.Id,
-                user.UserName,
-                user.Email
-            });
-        }
-        catch (Exception e)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = e.Message });
-        }
-    }
-
-
+    // POST: api/Registration
     [HttpPost]
-    [Route("login")]
-    public async Task<IActionResult> Login([FromBody] LoginModel model)
+    public async Task<IActionResult> Register([FromBody] RegisterModel model)
     {
         try
         {
-            var validationResult = _loginValidator.Validate(model);
+            //Ensure that the model is valid
+            var validationResult = _registerValidator.Validate(model);
             if (!validationResult.IsValid)
             {
                 return StatusCode(StatusCodes.Status400BadRequest, new Response
@@ -99,51 +50,6 @@ public class AuthenticationController : ControllerBase
                     Status = "Error",
                     Message = validationResult.Errors[0].ErrorMessage ?? "An unknown error has occured. "
                 });
-            }
-
-            ApplicationUser user = await _userManager.FindByEmailAsync(model.Email);
-            bool isPasswordValid = await _userManager.CheckPasswordAsync(user, model.Password);
-
-            if (user != null && isPasswordValid)
-            {
-                var token = await GetToken(user);
-
-                return Ok(new
-                {
-                    token = new JwtSecurityTokenHandler().WriteToken(token),
-                    expiration = token.ValidTo
-                });
-            }
-
-            return StatusCode(StatusCodes.Status400BadRequest, new Response
-            {
-                Status = "Error",
-                Message = "Invalid username or password."
-            });
-
-        }
-        catch (Exception e)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, new Response
-            {
-                Status = "Error",
-                Message = e.Message
-            });
-        }
-
-    }
-
-    [HttpPost]
-    [Route("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterModel model)
-    {
-        try
-        {
-            //Ensure that the model is valid
-            var x = _registerValidator.Validate(model);
-            if (!x.IsValid)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest, new Response { Status = "Error", Message = x.Errors[0].ErrorMessage ?? "An unknown error has occured. " });
             }
 
             //Check if user has already registered their e-mail address
@@ -157,7 +63,7 @@ public class AuthenticationController : ControllerBase
                 });
             };
 
-            //Check if user has already registered their user-name
+            //Check if user has already registered their username
             ApplicationUser userNameExists = await _userManager.FindByNameAsync(model.Username);
             if (userNameExists is not null)
             {
@@ -177,10 +83,13 @@ public class AuthenticationController : ControllerBase
             };
 
             IdentityResult result = await _userManager.CreateAsync(user, model.Password);
-
             if (!result.Succeeded)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "An unknown error has occured. Please try again later." });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response
+                {
+                    Status = "Error",
+                    Message = "An internal server has occured. Please try again later."
+                });
             }
 
             //Generate a bearer token to send in the response body
@@ -195,7 +104,11 @@ public class AuthenticationController : ControllerBase
         }
         catch (Exception e)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = e.Message });
+            return StatusCode(StatusCodes.Status500InternalServerError, new Response
+            {
+                Status = "Error",
+                Message = e.Message
+            });
         }
     }
 
@@ -227,5 +140,6 @@ public class AuthenticationController : ControllerBase
 
         return token;
     }
+
 
 }

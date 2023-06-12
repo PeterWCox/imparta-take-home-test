@@ -27,6 +27,7 @@ export const TaskListApp = () => {
     //Queries
     const [tasks] = useTasks()
     const [user, isUserLoading] = useUser()
+    console.log('tasks', tasks)
 
     return (
         <>

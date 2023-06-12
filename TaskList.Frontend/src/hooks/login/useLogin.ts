@@ -10,7 +10,7 @@ export interface LoginRequest {
     password: string
 }
 
-const useSignin = () => {
+const useLogin = () => {
     //Routing
     const navigate = useNavigate()
 
@@ -19,14 +19,14 @@ const useSignin = () => {
 
     //Mutations
     const {
-        mutateAsync: signin,
-        error,
-        isLoading,
-    } = useMutation(['signin'], {
+        mutateAsync: login,
+        error: isLoginError,
+        isLoading: isLoginLoading,
+    } = useMutation(['login'], {
         mutationFn: async (request: LoginRequest) => {
             try {
                 const response = await axios.post(
-                    Constants.ApiUrl(`Authentication/Login`),
+                    Constants.ApiUrl(`Login`),
                     request
                 )
 
@@ -57,7 +57,7 @@ const useSignin = () => {
         },
     })
 
-    return [signin, error, isLoading] as const
+    return [login, isLoginError, isLoginLoading] as const
 }
 
-export default useSignin
+export default useLogin

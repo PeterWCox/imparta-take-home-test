@@ -1,10 +1,8 @@
 ﻿using FluentValidation;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TaskList.Backend.Api.Authentication;
@@ -12,8 +10,8 @@ using TaskList.Backend.Api.Models;
 
 namespace TaskList.Backend.Api.Controllers;
 
-[Authorize]
-[Route("api/[controller]")]
+// [Authorize]
+[Route("api")]
 [ApiController]
 public class TasksController : ControllerBase
 {
@@ -27,28 +25,24 @@ public class TasksController : ControllerBase
         _taskValidator = taskValidator;
     }
 
-    // GET: api/Tasks
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<TaskModel>>> GetTasks()
-    {
-        var tasks = await _context.Tasks.ToListAsync();
-
-        if (tasks == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(tasks);
-    }
-
-    // GET: api/Tasks/5
-    [HttpGet("{id}")]
-    public async Task<ActionResult<TaskModel>> GetTask(int id)
+    //GET: api/TaskLists/1/Tasks/1
+    [HttpGet("TaskLists/{taskListId:int}/Tasks/{taskId:int}")]
+    public async Task<ActionResult<TaskModel>> GetTaskById(int taskListId, int taskId)
     {
         try
         {
-            var task = await _context.Tasks.FindAsync(id);
+            //Try and find the task list
+            var taskList = await _context.TaskLists
+                .Include(t => t.Tasks)
+                .FirstOrDefaultAsync(t => t.Id == taskListId);
 
+            if (taskList == null)
+            {
+                return NotFound();
+            }
+
+            //Try and find the task
+            var task = taskList.Tasks.FirstOrDefault(t => t.Id == taskId);
             if (task == null)
             {
                 return NotFound();
@@ -58,25 +52,61 @@ public class TasksController : ControllerBase
         }
         catch (Exception e)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = e.Message });
+            return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
         }
-
     }
 
-    // POST: api/Task
-    [HttpPost]
-    public async Task<ActionResult<TaskModel>> CreateTask(TaskModel task)
+    //GET: api/TaskLists/1/Tasks
+    [HttpGet("TaskLists/{taskListId:int}/Tasks")]
+    public async Task<ActionResult<TaskModel>> GetTasks(int taskListId)
+    {
+        try
+        {
+            //Try and find the task list
+            var taskList = await _context.TaskLists
+                .Include(t => t.Tasks)
+                .FirstOrDefaultAsync(t => t.Id == taskListId);
+
+            if (taskList == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(taskList.Tasks);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+        }
+    }
+
+    //POST: api/TaskLists/1/Tasks
+    [HttpPost("TaskLists/{taskListId:int}/Tasks")]
+    public async Task<ActionResult<TaskModel>> CreateTask(int taskListId, TaskModel task)
     {
         try
         {
             //Validate the task
-            var validationResult = await _taskValidator.ValidateAsync(task);
+            var validationResult = _taskValidator.Validate(task);
             if (!validationResult.IsValid)
             {
-                return StatusCode(StatusCodes.Status400BadRequest, new Response { Status = "Error", Message = validationResult.Errors[0].ErrorMessage ?? "An unknown error has occured. " });
+                return StatusCode(StatusCodes.Status400BadRequest, new Response
+                {
+                    Status = "Error",
+                    Message = validationResult.Errors[0].ErrorMessage ?? "An unknown error has occured. "
+                });
             }
 
-            var result = await _context.Tasks.AddAsync(task);
+            //Try and find the task list
+            var taskList = await _context.TaskLists.FirstOrDefaultAsync(t => t.Id == taskListId);
+            if (taskList == null)
+            {
+                return NotFound();
+            }
+
+
+            //Add the task to the task list
+            taskList.Tasks.Add(task);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("CreateTask", new { id = task.Id }, task);
@@ -87,40 +117,39 @@ public class TasksController : ControllerBase
         }
     }
 
-    // PUT: api/Tasks/5
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateTask(int id, TaskModel task)
+    //PUT: api/TaskLists/1/Tasks
+    [HttpPut("TaskLists/{taskListId:int}/Tasks/{taskId:int}")]
+    public async Task<ActionResult<TaskModel>> UpdateTask(int taskListId, int taskId, TaskModel task)
     {
         try
         {
-            if (id != task.Id)
+            //Verify the task
+            var validatedInput = _taskValidator.Validate(task);
+            if (!validatedInput.IsValid)
             {
-                return StatusCode(StatusCodes.Status400BadRequest, new Response { Status = "Error", Message = "The Id supplied does not match that of the task in the body" });
+                return StatusCode(StatusCodes.Status400BadRequest, new Response
+                {
+                    Status = "Error",
+                    Message = validatedInput.Errors[0].ErrorMessage ?? "An unknown error has occured. "
+                });
             }
 
-            //Validate the task
-            var validationResult = await _taskValidator.ValidateAsync(task);
-            if (!validationResult.IsValid)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest, new Response { Status = "Error", Message = validationResult.Errors[0].ErrorMessage ?? "An unknown error has occured. " });
-            }
+            //Find the tasklist
+            var taskList = await _context.TaskLists
+                .Include(t => t.Tasks)
+                .FirstOrDefaultAsync(t => t.Id == taskListId);
 
+            //Find the task
+            var taskToUpdate = taskList.Tasks.FirstOrDefault(t => t.Id == taskId);
+
+            //Update the task
+
+            //Update the DB
             _context.Entry(task).State = EntityState.Modified;
-
+            taskToUpdate.Title = task.Title;
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!TaskExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
         }
         catch (Exception e)
         {
@@ -128,20 +157,23 @@ public class TasksController : ControllerBase
         }
     }
 
-    // DELETE: api/Task/5
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteTask(int id)
+    //DELETE: api/TaskLists/1/Tasks/1
+    [HttpDelete("TaskLists/{taskListId:int}/Tasks/{taskId:int}")]
+    public async Task<ActionResult<TaskModel>> DeleteTask(int taskListId, int taskId)
     {
         try
         {
-            var task = await _context.Tasks.FindAsync(id);
+            //Check if the task list exists
+            TaskModel task = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == taskId);
             if (task == null)
             {
                 return NotFound();
             }
 
+            // //Remove the task from the task list
             _context.Tasks.Remove(task);
             await _context.SaveChangesAsync();
+
             return NoContent();
         }
         catch (Exception e)
@@ -150,8 +182,5 @@ public class TasksController : ControllerBase
         }
     }
 
-    private bool TaskExists(int id)
-    {
-        return _context.Tasks.Any(e => e.Id == id);
-    }
+
 }
