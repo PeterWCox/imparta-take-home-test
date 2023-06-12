@@ -50,37 +50,35 @@ export const TaskListApp = () => {
                             ) : null}
                         </div>
 
-                        {user ? (
-                            <div className={styles.statusLists}>
-                                <StatusColumn
-                                    status={0}
-                                    tasks={
-                                        tasks?.filter(
-                                            (t: Task) => t.status === 0
-                                        ) ?? []
-                                    }
-                                    title={'Pending'}
-                                />
-                                <StatusColumn
-                                    status={1}
-                                    tasks={
-                                        tasks?.filter(
-                                            (t: Task) => t.status === 1
-                                        ) ?? []
-                                    }
-                                    title={'In Progress'}
-                                />
-                                <StatusColumn
-                                    status={2}
-                                    tasks={
-                                        tasks?.filter(
-                                            (t: Task) => t.status === 2
-                                        ) ?? []
-                                    }
-                                    title={'Completed'}
-                                />
-                            </div>
-                        ) : null}
+                        <div className={styles.statusLists}>
+                            <StatusColumn
+                                status={0}
+                                tasks={
+                                    tasks?.filter(
+                                        (t: Task) => t.status === 0
+                                    ) ?? []
+                                }
+                                title={'Pending'}
+                            />
+                            <StatusColumn
+                                status={1}
+                                tasks={
+                                    tasks?.filter(
+                                        (t: Task) => t.status === 1
+                                    ) ?? []
+                                }
+                                title={'In Progress'}
+                            />
+                            <StatusColumn
+                                status={2}
+                                tasks={
+                                    tasks?.filter(
+                                        (t: Task) => t.status === 2
+                                    ) ?? []
+                                }
+                                title={'Completed'}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

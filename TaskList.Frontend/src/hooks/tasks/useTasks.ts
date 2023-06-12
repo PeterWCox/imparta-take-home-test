@@ -1,27 +1,29 @@
 import { useQuery } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
 import { useAppSelector } from '../../redux/hooks'
-import { RootState } from '../../redux/store'
 import { Constants } from '../../utils/Constants'
 import { QueryClientUtils } from '../../utils/QueryClientUtils'
 
 const useTasks = () => {
-    const { token } = useAppSelector((state: RootState) => state.auth)
+    const { selectedTaskList } = useAppSelector((state) => state.taskList)
+    const { token } = useAppSelector((state) => state.auth)
 
     const { data: tasks, isLoading } = useQuery({
-        queryKey: [QueryClientUtils.TASKS_QUERY_KEY],
+        queryKey: [QueryClientUtils.TASKS_QUERY_KEY, selectedTaskList],
         queryFn: async () => {
             try {
+                if (!selectedTaskList) {
+                    return []
+                }
+
                 const response = await axios.get(
-                    Constants.ApiUrl(`TaskLists/4/Tasks`),
+                    Constants.ApiUrl(`TaskLists/${selectedTaskList.id}/Tasks`),
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },
                     }
                 )
-
-                console.log('TASKS', response.data)
 
                 return response.data
             } catch (error) {

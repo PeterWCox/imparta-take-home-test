@@ -8,32 +8,46 @@ import { QueryClientUtils } from '../../utils/QueryClientUtils'
 const useAddTask = () => {
     //Hooks
     const queryClient = useQueryClient()
-    const token = useAppSelector((state) => state.auth.token)
+    const { token } = useAppSelector((state) => state.auth)
+    const { selectedTaskList } = useAppSelector((state) => state.taskList)
 
     //Mutations
-    const { mutateAsync: addTask } = useMutation(['task'], {
-        mutationFn: async (task: PartialTask) => {
-            try {
-                await axios.post(Constants.ApiUrl('Tasks'), task, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                })
+    const { mutateAsync: addTask } = useMutation(
+        ['addTask', selectedTaskList],
+        {
+            mutationFn: async (task: PartialTask) => {
+                try {
+                    if (!selectedTaskList) {
+                        return []
+                    }
 
-                queryClient.invalidateQueries([
-                    QueryClientUtils.TASKS_QUERY_KEY,
-                ])
-            } catch (error) {
-                const errors = error as AxiosError
-
-                if (errors?.response?.status === 401) {
-                    throw new Error(
-                        'You are not authenticated - please refresh the page and try logging in again.'
+                    await axios.post(
+                        Constants.ApiUrl(
+                            `TaskLists/${selectedTaskList?.id}/Tasks`
+                        ),
+                        task,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
                     )
+
+                    queryClient.invalidateQueries([
+                        QueryClientUtils.TASKS_QUERY_KEY,
+                    ])
+                } catch (error) {
+                    const errors = error as AxiosError
+
+                    if (errors?.response?.status === 401) {
+                        throw new Error(
+                            'You are not authenticated - please refresh the page and try logging in again.'
+                        )
+                    }
                 }
-            }
-        },
-    })
+            },
+        }
+    )
 
     return [addTask] as const
 }

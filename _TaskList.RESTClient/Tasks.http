@@ -2,7 +2,7 @@
 # ********** TASKS ************ # 
 
 ###  GET TASKS
-GET http://localhost:5000/api/tasklists/4/tasks 
+GET http://localhost:5000/api/tasklists/9/tasks 
 content-type: application/json
 
 ### GET TASK BY ID
@@ -10,11 +10,11 @@ GET http://localhost:5000/api/tasklists/4/tasks/12
 content-type: application/json
 
 ### CREATE TASK
-POST http://localhost:5000/api/tasklists/4/tasks 
+POST http://localhost:5000/api/tasklists/9/tasks 
 content-type: application/json
 
 {
-	"title": "A new task to do",
+	"title": "Yet another thing to do",
 }
 
 ### UPDATE TASK

@@ -8,38 +8,49 @@ const useRemoveTask = () => {
     //Hooks
     const queryClient = useQueryClient()
     const token = useAppSelector((state) => state.auth.token)
+    const { selectedTaskList } = useAppSelector((state) => state.taskList)
 
     //Mutations
-    const { mutateAsync: removeTask, error: removeTaskError } = useMutation(
-        ['remove'],
-        {
-            mutationFn: async (id: number) => {
-                try {
-                    await axios.delete(Constants.ApiUrl(`Tasks/${id}`), {
+    const {
+        mutateAsync: removeTask,
+        isLoading: isRemoveTaskLoading,
+        error: removeTaskError,
+    } = useMutation(['removeTask'], {
+        mutationFn: async (id: number) => {
+            try {
+                if (!selectedTaskList) {
+                    return []
+                }
+
+                await axios.delete(
+                    Constants.ApiUrl(
+                        `TaskLists/${selectedTaskList?.id}/Tasks/${id}`
+                    ),
+                    {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },
-                    })
-
-                    queryClient.invalidateQueries([
-                        QueryClientUtils.TASKS_QUERY_KEY,
-                    ])
-                } catch (error) {
-                    const errors = error as AxiosError
-
-                    if (errors?.response?.status === 401) {
-                        throw new Error(
-                            'You are not authenticated - please refresh the page and try logging in again.'
-                        )
                     }
+                )
 
-                    throw new Error('An unknown error has occured')
+                queryClient.invalidateQueries([
+                    QueryClientUtils.TASKS_QUERY_KEY,
+                ])
+            } catch (error) {
+                const errors = error as AxiosError
+
+                if (errors?.response?.status === 401) {
+                    throw new Error(
+                        'You are not authenticated - please refresh the page and try logging in again.'
+                    )
                 }
-            },
-        }
-    )
 
-    return [removeTask, removeTaskError] as const
+                throw new Error('An unknown error has occured')
+            }
+        },
+    })
+
+    return [removeTask, isRemoveTaskLoading, removeTaskError] as const
 }
 
 export default useRemoveTask

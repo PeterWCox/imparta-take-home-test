@@ -8,7 +8,11 @@ import { QueryClientUtils } from '../../utils/QueryClientUtils'
 const useTaskLists = () => {
     const { token } = useAppSelector((state: RootState) => state.auth)
 
-    const { data: taskLists, isLoading: isTaskListsLoading } = useQuery({
+    const {
+        data: taskLists,
+        isLoading: isTaskListsLoading,
+        error: taskListsError,
+    } = useQuery({
         queryKey: [QueryClientUtils.TASKS_QUERY_KEY],
         queryFn: async () => {
             try {
@@ -20,8 +24,6 @@ const useTaskLists = () => {
                         },
                     }
                 )
-
-                console.log(response.data)
 
                 return response.data
             } catch (error) {
@@ -38,7 +40,7 @@ const useTaskLists = () => {
         // enabled: !!token,
     })
 
-    return [taskLists, isTaskListsLoading] as const
+    return [taskLists, isTaskListsLoading, taskListsError] as const
 }
 
 export default useTaskLists
