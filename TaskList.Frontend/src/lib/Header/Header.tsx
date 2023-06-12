@@ -1,14 +1,12 @@
 import {
     DefaultButton,
-    Dropdown,
-    IDropdownOption,
     Persona,
     PersonaSize,
     PrimaryButton,
-    Text,
+    Text
 } from '@fluentui/react'
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { LoginModal } from '../../components/LoginModal/LoginModal'
 import { RegisterModal } from '../../components/RegisterModal/RegisterModal'
@@ -16,6 +14,7 @@ import useTaskLists from '../../hooks/taskLists/useTaskLists'
 import useUser from '../../hooks/user/useUser'
 import { useAppDispatch } from '../../redux/hooks'
 import { logout } from '../../redux/slices/authSlice'
+import { TaskListDropdown } from '../TasklistDropdown/TaskListDropdown'
 import styles from './Header.module.css'
 
 export const Header = () => {
@@ -25,7 +24,6 @@ export const Header = () => {
     //States
     const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false)
     const [isSigninModalOpen, setIsSigninModalOpen] = useState(false)
-    const [selectedItem, setSelectedItem] = React.useState<IDropdownOption>()
 
     //Hooks
     const navigate = useNavigate()
@@ -49,9 +47,7 @@ export const Header = () => {
     const handleRegisterModalClose = () => {
         setIsRegisterModalOpen(false)
     }
-    const handleDropdownChange = (e: any, option: any) => {
-        setSelectedItem(option)
-    }
+
 
     const opts = taskLists?.map((taskList: any) => {
         return {
@@ -87,19 +83,8 @@ export const Header = () => {
                     </div>
 
                     <div className={styles.right}>
-                        <Dropdown
-                            selectedKey={
-                                selectedItem ? selectedItem.key : undefined
-                            }
-                            placeholder="Select a tasklist"
-                            options={taskLists?.map((taskList: any) => {
-                                return {
-                                    key: taskList.id,
-                                    text: taskList.title,
-                                }
-                            })}
-                            onChange={handleDropdownChange}
-                        />
+                        <TaskListDropdown />
+
                         {user ? (
                             <>
                                 <Persona

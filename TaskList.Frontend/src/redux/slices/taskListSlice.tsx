@@ -2,11 +2,11 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { TaskList } from '../../models/TaskList'
 
 export interface TaskListSlice {
-    taskList: TaskList | null
+    selectedTaskList: TaskList | null
 }
 
 const initialState: TaskListSlice = {
-    taskList: null,
+    selectedTaskList: null,
 }
 
 export const taskListSlice = createSlice({
@@ -14,7 +14,7 @@ export const taskListSlice = createSlice({
     initialState,
     reducers: {
         setTasklist: (state, action: PayloadAction<TaskList | null>) => {
-            state.taskList = action.payload
+            state.selectedTaskList = action.payload
         },
     },
 })
