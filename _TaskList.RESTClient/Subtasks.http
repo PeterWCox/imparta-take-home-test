@@ -2,19 +2,20 @@
 # ********** SUBTASKS ************ # 
 
 ###  GET SUBTASKS
-GET http://localhost:5000/api/tasklists/1/tasks/3/subtasks 
+GET {{baseUrl}}/tasklists/5/tasks/29/subtasks 
 content-type: application/json
+Authorization: Bearer {{token}}
 
 ### GET SUBTASK BY ID
-GET http://localhost:5000/api/tasklists/1/tasks/3/subtasks/1 
+GET http://localhost:5000/api/tasklists/5/tasks/29/subtasks/4 
 content-type: application/json
 
 ### CREATE SUBTASK
-POST http://localhost:5000/api/tasklists/1/tasks/3/subtasks 
+POST http://localhost:5000/api/tasklists/5/tasks/29/subtasks 
 content-type: application/json
 
 {
-	"title": "Subtask #1",
+	"title": "Subtask #444",
 }
 
 ### UPDATE SUBTASK
@@ -28,6 +29,6 @@ content-type: application/json
 }
 
 ### DELETE SUBTASK
-DELETE http://localhost:5000/api/tasklists/1/tasks/3/subtasks/1 
+DELETE http://localhost:5000/api/tasklists/5/tasks/29/subtasks/4
 
 

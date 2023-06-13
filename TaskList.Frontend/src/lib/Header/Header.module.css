@@ -1,11 +1,15 @@
+.wrapper {
+    background-color: #e7e0e0;
+    padding: 1rem;
+    margin: 0 auto;
+}
+
 .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    background-color: #e7e0e0;
+    max-width: 1600px;
+    margin-inline: auto;
 }
 
 .left {

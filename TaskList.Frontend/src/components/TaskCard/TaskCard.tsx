@@ -12,8 +12,10 @@ import {
 } from '../../hooks/tasks/useEditTask'
 import useRemoveTask from '../../hooks/tasks/useRemoveTask'
 import { Task } from '../../models/Task'
+import { DueDateHelpers } from '../../utils/DueDateHelpers'
 import { EditTaskPanel } from '../Modals/EditTaskPanel/EditTaskPanel'
 import styles from './TaskCard.module.css'
+import { TaskCardBadge } from './TaskCardBadges/TaskCardBadge'
 
 export interface ITaskCardProps {
     task: Task
@@ -57,6 +59,8 @@ export const TaskCard = (props: ITaskCardProps) => {
         () => setShowContextualMenu(false),
         []
     )
+
+    const dueDateText = DueDateHelpers.getDueDateButtonProps(props.task.dueDate)
 
     const menuItems: IContextualMenuItem[] = [
         {
@@ -159,9 +163,43 @@ export const TaskCard = (props: ITaskCardProps) => {
                     className={`${styles.title} ${
                         props.task.isDone ? styles.done : null
                     }`}
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '10px',
+                    }}
                 >
-                    <Text>{props.task.title}</Text>
+                    <Text variant="xLarge">{props.task.title}</Text>
                     {/* Add a star icon from FluentUI */}
+
+                    <div
+                        className={styles.badges}
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            gap: '1rem',
+                            flexWrap: 'wrap',
+                        }}
+                    >
+                        {/* My Day Badge */}
+                        {props.task.isMyDay ? (
+                            <TaskCardBadge label="My day" iconName="Sunny" />
+                        ) : null}
+
+                        {/* Notes Badge */}
+                        {props.task.notes ? (
+                            <TaskCardBadge iconName="NoteForward" />
+                        ) : null}
+
+                        {/* Reminder Badge */}
+                        {props.task.dueDate ? (
+                            <TaskCardBadge
+                                iconName="Calendar"
+                                label={dueDateText.text}
+                                color={dueDateText.color}
+                            />
+                        ) : null}
+                    </div>
 
                     <ContextualMenu
                         items={menuItems}
@@ -179,6 +217,10 @@ export const TaskCard = (props: ITaskCardProps) => {
                                 ? 'FavoriteStarFill'
                                 : 'FavoriteStar'
                         }`}
+                        style={{
+                            fontSize: '1.5rem',
+                            marginRight: '1rem',
+                        }}
                     />
                 </div>
             </li>

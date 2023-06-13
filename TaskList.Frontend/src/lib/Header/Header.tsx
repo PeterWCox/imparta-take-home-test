@@ -91,7 +91,7 @@ export const Header = () => {
                 />
             ) : null}
 
-            <header>
+            <header className={styles.wrapper}>
                 <nav className={styles.container}>
                     <div className={styles.left}>
                         {/* Logo */}

@@ -1,22 +1,19 @@
-
-
 # ********** TASKS ************ # 
 
-@baseUrl = http://localhost:5000/api
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoicGV0ZXJjb3giLCJqdGkiOiI3ZWRhZmVlNC1kMTFlLTQ0YjYtYjc4Ni0zNGZmYWQ1N2Y3MzAiLCJleHAiOjE2ODY2MDI2NDQsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6MjQyODgiLCJhdWQiOiJodHRwOiAvL2xvY2FsaG9zdDo0MjAwIn0.ONuL4xWnkdn3aHxlBe-GvPV86-riWShyVYpQPvm4iX0
-
-
 ###  GET TASKS
-GET {{baseUrl}}/tasklists/9/tasks 
+GET {{baseUrl}}/tasklists/5/tasks 
 content-type: application/json
+Authorization: Bearer {{token}}
 
 ### GET TASK BY ID
 GET {{baseUrl}}/tasklists/9/tasks/19
 content-type: application/json
+Authorization: Bearer {{token}}
 
 ### CREATE TASK
 POST {{baseUrl}}/tasklists/9/tasks 
 content-type: application/json
+Authorization: Bearer {{token}}
 
 {
 	"title": "NO due date?",
@@ -25,6 +22,7 @@ content-type: application/json
 ### UPDATE TASK
 PATCH {{baseUrl}}/tasklists/9/tasks/19
 content-type: application/json
+Authorization: Bearer {{token}}
 
 [
   {

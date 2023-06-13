@@ -16,6 +16,9 @@ const validationSchema = z.object({
     title: z.string().min(1, { message: 'Title is required' }).max(100, {
         message: 'Title must be less than 100 characters',
     }),
+    notes: z.string().max(1000, {
+        message: 'Notes must be less than 1000 characters',
+    }),
     // dueDate: z.date(),
 })
 
@@ -41,6 +44,7 @@ export const EditTaskPanel = (props: IEditTaskPanelProps) => {
         resolver: zodResolver(validationSchema),
         defaultValues: {
             title: props.task.title,
+            notes: props.task.notes,
         },
     })
 
@@ -63,6 +67,7 @@ export const EditTaskPanel = (props: IEditTaskPanelProps) => {
                     editTask({
                         id: props.task.id,
                         title: data.title,
+                        notes: data.notes,
                         dueDate: dueDate,
                         isMyDay: isMyDay,
                     })
@@ -97,6 +102,24 @@ export const EditTaskPanel = (props: IEditTaskPanelProps) => {
                     setIsMyDay={() => {
                         setIsMyDay(!isMyDay)
                     }}
+                />
+
+                {/* Username */}
+                <Controller
+                    control={control}
+                    name="notes"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                        <TextField
+                            id="Notes"
+                            label="Notes"
+                            onChange={onChange}
+                            multiline
+                            autoAdjustHeight
+                            onBlur={onBlur}
+                            value={value}
+                            errorMessage={errors.title && errors.title?.message}
+                        />
+                    )}
                 />
 
                 <div className={styles.buttonGroup}>

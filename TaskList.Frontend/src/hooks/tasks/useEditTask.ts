@@ -17,7 +17,6 @@ const useEditTask = () => {
         {
             mutationFn: async (task: PartialTask) => {
                 try {
-                    console.log(selectedTaskList)
                     if (!selectedTaskList) {
                         return
                     }
@@ -39,10 +38,15 @@ const useEditTask = () => {
                     if (task.isMyDay !== undefined) {
                         request.add('/isMyDay', task.isMyDay)
                     }
+                    if (task.notes !== undefined) {
+                        request.add('/notes', task.notes)
+                    }
                     if (task.dueDate !== undefined) {
                         request.add(
                             '/dueDate',
-                            task.dueDate ? task.dueDate.toJSON() : null
+                            task.dueDate
+                                ? new Date(task.dueDate).toJSON()
+                                : null
                         )
                     }
 
