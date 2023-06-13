@@ -36,8 +36,14 @@ const useEditTask = () => {
                     if (task.isImportant !== undefined) {
                         request.add('/isImportant', task.isImportant)
                     }
+                    if (task.isMyDay !== undefined) {
+                        request.add('/isMyDay', task.isMyDay)
+                    }
                     if (task.dueDate !== undefined) {
-                        request.add('/dueDate', task.dueDate?.toJSON())
+                        request.add(
+                            '/dueDate',
+                            task.dueDate ? task.dueDate.toJSON() : null
+                        )
                     }
 
                     await axios.patch(
@@ -50,6 +56,7 @@ const useEditTask = () => {
                         QueryClientUtils.TASKS_QUERY_KEY,
                     ])
                 } catch (error) {
+                    console.log(error)
                     const errors = error as AxiosError
 
                     if (errors?.response?.status === 401) {

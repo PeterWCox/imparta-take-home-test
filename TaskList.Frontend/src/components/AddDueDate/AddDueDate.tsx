@@ -132,6 +132,14 @@ export const AddDueDate = (props: IAddDueDateProps) => {
                     >
                         {obj.text}
                     </Text>
+
+                    <ContextualMenu
+                        items={menuItems}
+                        hidden={!showContextualMenu}
+                        target={linkRef}
+                        onItemClick={onHideContextualMenu}
+                        onDismiss={onHideContextualMenu}
+                    />
                 </div>
 
                 {/* FluentUI Icon for calendar */}
@@ -150,14 +158,6 @@ export const AddDueDate = (props: IAddDueDateProps) => {
                         />
                     </div>
                 ) : null}
-
-                <ContextualMenu
-                    items={menuItems}
-                    hidden={!showContextualMenu}
-                    target={linkRef}
-                    onItemClick={onHideContextualMenu}
-                    onDismiss={onHideContextualMenu}
-                />
             </div>
         </div>
     )

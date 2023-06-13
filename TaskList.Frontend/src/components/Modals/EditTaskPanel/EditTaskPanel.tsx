@@ -9,6 +9,7 @@ import useRemoveTask from '../../../hooks/tasks/useRemoveTask'
 import { DangerButton } from '../../../lib/DangerButton/DangerButton'
 import { Task } from '../../../models/Task'
 import { AddDueDate } from '../../AddDueDate/AddDueDate'
+import { AddMyDay } from '../../AddMyDay/AddMyDay'
 import styles from './EditTaskPanel.module.css'
 
 const validationSchema = z.object({
@@ -29,6 +30,7 @@ export interface IEditTaskPanelProps {
 export const EditTaskPanel = (props: IEditTaskPanelProps) => {
     //States
     const [dueDate, setDueDate] = useState<Date | null>(props.task.dueDate)
+    const [isMyDay, setIsMyDay] = useState<boolean>(props.task.isMyDay)
 
     //React-Hook-Form
     const {
@@ -62,6 +64,7 @@ export const EditTaskPanel = (props: IEditTaskPanelProps) => {
                         id: props.task.id,
                         title: data.title,
                         dueDate: dueDate,
+                        isMyDay: isMyDay,
                     })
                     props.onPanelDismiss()
                 })}
@@ -84,8 +87,15 @@ export const EditTaskPanel = (props: IEditTaskPanelProps) => {
 
                 <AddDueDate
                     dueDate={dueDate}
-                    setDueDate={(date) => {
+                    setDueDate={(date: Date | null) => {
                         setDueDate(date)
+                    }}
+                />
+
+                <AddMyDay
+                    isMyDay={isMyDay}
+                    setIsMyDay={() => {
+                        setIsMyDay(!isMyDay)
                     }}
                 />
 

@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import useTasks from '../hooks/tasks/useTasks'
-import useUser from '../hooks/user/useUser'
 import { Task } from '../models/Task'
 import { useAppDispatch, useAppSelector } from '../redux/hooks'
 import { setToken } from '../redux/slices/authSlice'
@@ -27,7 +26,6 @@ export const TaskListApp = () => {
 
     //Queries
     const [tasks] = useTasks()
-    const [user, isUserLoading] = useUser()
 
     return (
         <>
@@ -38,7 +36,7 @@ export const TaskListApp = () => {
                         {/* Header */}
                         <div className={styles.header}></div>
 
-                        {!user ? <PleaseLogin /> : null}
+                        <PleaseLogin />
 
                         {selectedTaskList ? (
                             <div className={styles.statusLists}>
