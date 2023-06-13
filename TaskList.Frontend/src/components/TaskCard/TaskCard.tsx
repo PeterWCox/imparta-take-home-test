@@ -2,6 +2,7 @@ import {
     ContextualMenu,
     IContextualMenuItem,
     Icon,
+    Link,
     Text,
 } from '@fluentui/react'
 import { useBoolean } from '@fluentui/react-hooks'
@@ -13,6 +14,7 @@ import {
 import useRemoveTask from '../../hooks/tasks/useRemoveTask'
 import { Task } from '../../models/Task'
 import { DueDateHelpers } from '../../utils/DueDateHelpers'
+import { TaskListHelpers } from '../../utils/TaskListHelpers'
 import { EditTaskPanel } from '../Modals/EditTaskPanel/EditTaskPanel'
 import styles from './TaskCard.module.css'
 import { TaskCardBadge } from './TaskCardBadges/TaskCardBadge'
@@ -169,7 +171,14 @@ export const TaskCard = (props: ITaskCardProps) => {
                         gap: '10px',
                     }}
                 >
-                    <Text variant="xLarge">{props.task.title}</Text>
+                    {TaskListHelpers.isValidUrl(props.task.title) ? (
+                        <Link href={props.task.title} target="_blank">
+                            {props.task.title}
+                        </Link>
+                    ) : (
+                        <Text variant="large">{props.task.title}</Text>
+                    )}
+
                     {/* Add a star icon from FluentUI */}
 
                     <div
