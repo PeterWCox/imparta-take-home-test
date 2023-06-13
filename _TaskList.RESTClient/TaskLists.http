@@ -10,7 +10,7 @@ GET {{baseUrl}}/tasklists
 content-type: application/json
 
 ### GET TASK LIST BY ID
-GET {{baseUrl}}/tasklists/4
+GET {{baseUrl}}/tasklists/8
 content-type: application/json
 
 ### CREATE TASKLIST
@@ -22,15 +22,18 @@ content-type: application/json
 }
 
 ### UPDATE TASKLIST
-PUT http://localhost:5000/api/tasklists/8
+PATCH {{baseUrl}}/tasklists/8
 content-type: application/json
 
-{
-	"id": 8,
-	"title": "3333333",
-}
+[
+  {
+    "op": "add",
+    "path": "/title",
+    "value": "JSON PATCH WORKED!"
+  }
+]
 
 ### DELETE TASKLIST
-DELETE http://localhost:5000/api/tasklists/10
+DELETE {{baseUrl}}/tasklists/10
 
 

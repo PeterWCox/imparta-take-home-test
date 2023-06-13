@@ -1,16 +1,21 @@
 
+
 # ********** TASKS ************ # 
 
+@baseUrl = http://localhost:5000/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoicGV0ZXJjb3giLCJqdGkiOiI3ZWRhZmVlNC1kMTFlLTQ0YjYtYjc4Ni0zNGZmYWQ1N2Y3MzAiLCJleHAiOjE2ODY2MDI2NDQsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6MjQyODgiLCJhdWQiOiJodHRwOiAvL2xvY2FsaG9zdDo0MjAwIn0.ONuL4xWnkdn3aHxlBe-GvPV86-riWShyVYpQPvm4iX0
+
+
 ###  GET TASKS
-GET http://localhost:5000/api/tasklists/9/tasks 
+GET {{baseUrl}}/tasklists/9/tasks 
 content-type: application/json
 
 ### GET TASK BY ID
-GET http://localhost:5000/api/tasklists/4/tasks/12
+GET {{baseUrl}}/tasklists/9/tasks/19
 content-type: application/json
 
 ### CREATE TASK
-POST http://localhost:5000/api/tasklists/9/tasks 
+POST {{baseUrl}}/tasklists/9/tasks 
 content-type: application/json
 
 {
@@ -18,14 +23,23 @@ content-type: application/json
 }
 
 ### UPDATE TASK
-PUT http://localhost:5000/api/tasklists/4/tasks/10 
+PATCH {{baseUrl}}/tasklists/9/tasks/19
 content-type: application/json
 
-{
-	"title": "UPDATED TASK",
-}
+[
+  {
+    "op": "add",
+    "path": "/title",
+    "value": "BOB MARLEY!"
+  },
+   {
+    "op": "add",
+    "path": "/isDone",
+    "value": true
+  }
+]
 
 ### DELETE TASK
-DELETE http://localhost:5000/api/tasklists/4/tasks/8 
+DELETE {{baseUrl}}/tasklists/4/tasks/8 
 
 

@@ -13,7 +13,7 @@ const useTaskLists = () => {
         isLoading: isTaskListsLoading,
         error: taskListsError,
     } = useQuery({
-        queryKey: [QueryClientUtils.TASKS_QUERY_KEY],
+        queryKey: [QueryClientUtils.TASKLISTS_QUERY_KEY],
         queryFn: async () => {
             try {
                 const response = await axios.get(

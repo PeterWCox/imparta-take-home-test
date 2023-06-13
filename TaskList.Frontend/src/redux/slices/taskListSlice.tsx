@@ -13,12 +13,15 @@ export const taskListSlice = createSlice({
     name: 'taskList',
     initialState,
     reducers: {
-        setTasklist: (state, action: PayloadAction<TaskList | null>) => {
+        setSelectedTaskList: (
+            state,
+            action: PayloadAction<TaskList | null>
+        ) => {
             state.selectedTaskList = action.payload
         },
     },
 })
 
-export const { setTasklist } = taskListSlice.actions
+export const { setSelectedTaskList } = taskListSlice.actions
 
 export default taskListSlice.reducer

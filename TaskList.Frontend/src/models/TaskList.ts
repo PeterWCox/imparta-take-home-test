@@ -4,4 +4,4 @@ export interface TaskList {
     isDone: boolean
 }
 
-export type PartialTask = Partial<TaskList>
+export type PartialTaskList = Partial<TaskList>

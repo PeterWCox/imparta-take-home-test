@@ -12,7 +12,7 @@ import {
 } from '../../hooks/tasks/useEditTask'
 import useRemoveTask from '../../hooks/tasks/useRemoveTask'
 import { Task } from '../../models/Task'
-import { EditTaskPanel } from '../EditTaskPanel/EditTaskPanel'
+import { EditTaskPanel } from '../Modals/EditTaskPanel/EditTaskPanel'
 import styles from './TaskCard.module.css'
 
 export interface ITaskCardProps {
@@ -30,14 +30,21 @@ export const TaskCard = (props: ITaskCardProps) => {
 
     //Hooks
     const [add] = useAddTask()
-    const [edit] = useEditTask()
+    const [editTask] = useEditTask()
     const [remove] = useRemoveTask()
 
     //Handlers
     const onCheckboxClick = useCallback(() => {
-        edit({
+        editTask({
             ...props.task,
             isDone: !props.task.isDone,
+        })
+    }, [props.task])
+
+    const onStarClick = useCallback(() => {
+        editTask({
+            ...props.task,
+            isImportant: !props.task.isImportant,
         })
     }, [props.task])
 
@@ -69,7 +76,8 @@ export const TaskCard = (props: ITaskCardProps) => {
                         iconProps: { iconName: 'Timer' },
                         text: 'Pending',
                         onClick: () => {
-                            edit({
+                            editTask({
+                                id: props.task.id,
                                 status: 0,
                             })
                         },
@@ -79,7 +87,8 @@ export const TaskCard = (props: ITaskCardProps) => {
                         iconProps: { iconName: 'TimelineDelivery' },
                         text: 'In Progress',
                         onClick: () => {
-                            edit({
+                            editTask({
+                                id: props.task.id,
                                 status: 1,
                             })
                         },
@@ -89,7 +98,8 @@ export const TaskCard = (props: ITaskCardProps) => {
                         iconProps: { iconName: 'CompletedSolid' },
                         text: 'Completed',
                         onClick: () => {
-                            edit({
+                            editTask({
+                                id: props.task.id,
                                 status: 2,
                             })
                         },
@@ -119,14 +129,14 @@ export const TaskCard = (props: ITaskCardProps) => {
             {/* Edit Panel */}
             <EditTaskPanel
                 task={props.task}
-                isOpen={isOpen}
-                onDismiss={dismissPanel}
+                isPanelOpen={isOpen}
+                onPanelDismiss={dismissPanel}
             />
 
             {/* Task Card */}
             <li className={styles.task}>
                 {/* Checkbox */}
-                <div className={styles.icon} onClick={onCheckboxClick}>
+                <div className={styles.checkbox} onClick={onCheckboxClick}>
                     <Icon
                         iconName={`${
                             props.task.isDone
@@ -151,12 +161,24 @@ export const TaskCard = (props: ITaskCardProps) => {
                     }`}
                 >
                     <Text>{props.task.title}</Text>
+                    {/* Add a star icon from FluentUI */}
+
                     <ContextualMenu
                         items={menuItems}
                         hidden={!showContextualMenu}
                         target={linkRef}
                         onItemClick={onHideContextualMenu}
                         onDismiss={onHideContextualMenu}
+                    />
+                </div>
+                {/* Important Star */}
+                <div className={styles.star} onClick={onStarClick}>
+                    <Icon
+                        iconName={`${
+                            props.task.isImportant
+                                ? 'FavoriteStarFill'
+                                : 'FavoriteStar'
+                        }`}
                     />
                 </div>
             </li>

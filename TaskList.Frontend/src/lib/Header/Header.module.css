@@ -5,9 +5,14 @@
     padding: 1rem;
     max-width: 1200px;
     margin: 0 auto;
+    background-color: #e7e0e0;
 }
 
 .left {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
     margin-left: 10px;
 }
 

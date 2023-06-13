@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -117,45 +118,35 @@ public class TasksController : ControllerBase
         }
     }
 
-    //PUT: api/TaskLists/1/Tasks
-    [HttpPut("TaskLists/{taskListId:int}/Tasks/{taskId:int}")]
-    public async Task<ActionResult<TaskModel>> UpdateTask(int taskListId, int taskId, TaskModel task)
+    [HttpPatch("TaskLists/{taskListId:int}/Tasks/{taskId:int}")]
+    public IActionResult UpdateTask(int taskListId, int taskId, [FromBody] JsonPatchDocument<TaskModel> patchDoc)
     {
-        try
+        if (patchDoc != null)
         {
-            //Verify the task
-            var validatedInput = _taskValidator.Validate(task);
-            if (!validatedInput.IsValid)
+            //Get the tasklist using EF
+            var taskList = _context.TaskLists
+                .Include(tl => tl.Tasks)
+                .FirstOrDefault(x => x.Id == taskListId);
+
+            //Get the task
+            var task = taskList.Tasks.FirstOrDefault(x => x.Id == taskId);
+            patchDoc.ApplyTo(task, ModelState);
+
+
+            if (!ModelState.IsValid)
             {
-                return StatusCode(StatusCodes.Status400BadRequest, new Response
-                {
-                    Status = "Error",
-                    Message = validatedInput.Errors[0].ErrorMessage ?? "An unknown error has occured. "
-                });
+                return BadRequest(ModelState);
             }
 
-            //Find the tasklist
-            var taskList = await _context.TaskLists
-                .Include(t => t.Tasks)
-                .FirstOrDefaultAsync(t => t.Id == taskListId);
-
-            //Find the task
-            var taskToUpdate = taskList.Tasks.FirstOrDefault(t => t.Id == taskId);
-
-            //Update the task
-
-            //Update the DB
-            _context.Entry(task).State = EntityState.Modified;
-            taskToUpdate.Title = task.Title;
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            _context.SaveChangesAsync();
+            return new ObjectResult(taskList);
         }
-        catch (Exception e)
+        else
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            return BadRequest(ModelState);
         }
     }
+
 
     //DELETE: api/TaskLists/1/Tasks/1
     [HttpDelete("TaskLists/{taskListId:int}/Tasks/{taskId:int}")]

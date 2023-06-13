@@ -6,6 +6,11 @@
     padding: 5px;
 }
 
+.checkbox {
+    padding: 5px;
+    cursor: pointer;
+}
+
 .icon {
     padding: 5px;
     cursor: pointer;

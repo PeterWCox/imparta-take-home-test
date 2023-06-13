@@ -1,5 +1,6 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -110,42 +111,28 @@ public class TaskListsController : ControllerBase
         }
     }
 
-    // PUT: api/TaskLists/5
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateTaskList(int id, TaskListModel taskList)
+    [HttpPatch("{id}")]
+    public IActionResult UpdateTaskList(int id,
+    [FromBody] JsonPatchDocument<TaskListModel> patchDoc)
     {
-        try
+        if (patchDoc != null)
         {
-            //Validate the Id
-            if (id != taskList.Id)
+            //Get the tasklist using EF
+            var taskList = _context.TaskLists.FirstOrDefault(x => x.Id == id);
+            patchDoc.ApplyTo(taskList, ModelState);
+
+
+            if (!ModelState.IsValid)
             {
-                return StatusCode(StatusCodes.Status400BadRequest, new Response
-                {
-                    Status = "Error",
-                    Message = "The Id supplied does not match that of the task in the body"
-                });
+                return BadRequest(ModelState);
             }
 
-            //Validate the task
-            var validationResult = await _taskListValidator.ValidateAsync(taskList);
-            if (!validationResult.IsValid)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest, new Response
-                {
-                    Status = "Error",
-                    Message = validationResult.Errors[0].ErrorMessage ?? "An unknown error has occured. "
-                });
-            }
-
-            //Update the task in the database
-            _context.Entry(taskList).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            _context.SaveChangesAsync();
+            return new ObjectResult(taskList);
         }
-        catch (Exception e)
+        else
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            return BadRequest(ModelState);
         }
     }
 

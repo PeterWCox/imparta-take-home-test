@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
+import { JSONPatchFactory } from '../../models/JsonPatch'
 import { PartialTask } from '../../models/Task'
 import { useAppSelector } from '../../redux/hooks'
 import { Constants } from '../../utils/Constants'
@@ -8,22 +9,38 @@ import { QueryClientUtils } from '../../utils/QueryClientUtils'
 const useEditTask = () => {
     //Hooks
     const queryClient = useQueryClient()
-    const token = useAppSelector((state) => state.auth.token)
+    const { selectedTaskList } = useAppSelector((state) => state.taskList)
 
     //Mutations
     const { mutateAsync: editTask, error: editTaskError } = useMutation(
-        ['edit'],
+        ['editTask'],
         {
             mutationFn: async (task: PartialTask) => {
                 try {
-                    await axios.put(
-                        Constants.ApiUrl(`Tasks/${task.id}`),
-                        task,
-                        {
-                            headers: {
-                                Authorization: `Bearer ${token}`,
-                            },
-                        }
+                    if (!selectedTaskList) {
+                        return
+                    }
+
+                    const request = new JSONPatchFactory()
+
+                    if (task.title !== undefined) {
+                        request.add('/title', task.title)
+                    }
+                    if (task.isDone !== undefined) {
+                        request.add('/isDone', task.isDone)
+                    }
+                    if (task.status !== undefined) {
+                        request.add('/status', task.status)
+                    }
+                    if (task.isImportant !== undefined) {
+                        request.add('/isImportant', task.isImportant)
+                    }
+
+                    await axios.patch(
+                        Constants.ApiUrl(
+                            `TaskLists/${selectedTaskList?.id}/Tasks/${task.id}`
+                        ),
+                        request.getJsonPatch()
                     )
                     queryClient.invalidateQueries([
                         QueryClientUtils.TASKS_QUERY_KEY,

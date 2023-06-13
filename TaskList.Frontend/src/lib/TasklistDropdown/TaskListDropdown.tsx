@@ -2,7 +2,7 @@ import { Dropdown } from '@fluentui/react'
 
 import useTaskLists from '../../hooks/taskLists/useTaskLists'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
-import { setTasklist } from '../../redux/slices/taskListSlice'
+import { setSelectedTaskList } from '../../redux/slices/taskListSlice'
 
 export const TaskListDropdown = () => {
     //Redux
@@ -17,7 +17,7 @@ export const TaskListDropdown = () => {
         const dropdownOption = taskLists?.find(
             (taskList: any) => taskList.id === option.key
         )
-        dispatch(setTasklist(dropdownOption))
+        dispatch(setSelectedTaskList(dropdownOption))
     }
 
     return (

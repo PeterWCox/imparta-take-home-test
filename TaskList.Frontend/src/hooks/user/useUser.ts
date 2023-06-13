@@ -9,19 +9,16 @@ const useUser = () => {
     const { token } = useAppSelector((state: RootState) => state.auth)
 
     const { isLoading, data } = useQuery({
-        queryKey: ['me'],
+        queryKey: [token],
         queryFn: async () => {
             try {
-                const response = await axios.get(
-                    Constants.ApiUrl('User'),
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                )
+                const { data } = await axios.get(Constants.ApiUrl('User'), {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                })
 
-                return response.data
+                return data
             } catch (error) {
                 const errors = error as AxiosError
                 console.log(errors)
