@@ -19,7 +19,7 @@ POST {{baseUrl}}/tasklists/9/tasks
 content-type: application/json
 
 {
-	"title": "Yet another thing to do",
+	"title": "NO due date?",
 }
 
 ### UPDATE TASK
@@ -32,10 +32,15 @@ content-type: application/json
     "path": "/title",
     "value": "BOB MARLEY!"
   },
+  {
+    "op": "add",
+    "path": "/isImportant",
+    "value": true
+  },
    {
     "op": "add",
-    "path": "/isDone",
-    "value": true
+    "path": "/dueDate",
+    "value": "2023-06-13T01:29:51.022Z"
   }
 ]
 

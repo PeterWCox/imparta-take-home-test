@@ -17,6 +17,7 @@ const useEditTask = () => {
         {
             mutationFn: async (task: PartialTask) => {
                 try {
+                    console.log(selectedTaskList)
                     if (!selectedTaskList) {
                         return
                     }
@@ -34,6 +35,9 @@ const useEditTask = () => {
                     }
                     if (task.isImportant !== undefined) {
                         request.add('/isImportant', task.isImportant)
+                    }
+                    if (task.dueDate !== undefined) {
+                        request.add('/dueDate', task.dueDate?.toJSON())
                     }
 
                     await axios.patch(

@@ -50,7 +50,6 @@ public class TaskListsController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.LogError(e.Message);
             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
         }
 
@@ -76,7 +75,6 @@ public class TaskListsController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.LogError(e.Message);
             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
         }
 

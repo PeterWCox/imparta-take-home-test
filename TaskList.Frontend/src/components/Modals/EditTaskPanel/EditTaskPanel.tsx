@@ -1,18 +1,21 @@
 import { PrimaryButton, TextField } from '@fluentui/react'
 import { Panel } from '@fluentui/react/lib/Panel'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import useEditTask from '../../../hooks/tasks/useEditTask'
 import useRemoveTask from '../../../hooks/tasks/useRemoveTask'
 import { DangerButton } from '../../../lib/DangerButton/DangerButton'
 import { Task } from '../../../models/Task'
+import { AddDueDate } from '../../AddDueDate/AddDueDate'
 import styles from './EditTaskPanel.module.css'
 
 const validationSchema = z.object({
     title: z.string().min(1, { message: 'Title is required' }).max(100, {
         message: 'Title must be less than 100 characters',
     }),
+    // dueDate: z.date(),
 })
 
 type ValidationSchema = z.infer<typeof validationSchema>
@@ -24,6 +27,9 @@ export interface IEditTaskPanelProps {
 }
 
 export const EditTaskPanel = (props: IEditTaskPanelProps) => {
+    //States
+    const [dueDate, setDueDate] = useState<Date | null>(props.task.dueDate)
+
     //React-Hook-Form
     const {
         handleSubmit,
@@ -47,7 +53,6 @@ export const EditTaskPanel = (props: IEditTaskPanelProps) => {
             isLightDismiss
             headerText="Edit Task"
             closeButtonAriaLabel="Close"
-            // onRenderFooterContent={onRenderFooterContent}
             isFooterAtBottom={true}
         >
             <form
@@ -56,6 +61,7 @@ export const EditTaskPanel = (props: IEditTaskPanelProps) => {
                     editTask({
                         id: props.task.id,
                         title: data.title,
+                        dueDate: dueDate,
                     })
                     props.onPanelDismiss()
                 })}
@@ -74,6 +80,13 @@ export const EditTaskPanel = (props: IEditTaskPanelProps) => {
                             errorMessage={errors.title && errors.title?.message}
                         />
                     )}
+                />
+
+                <AddDueDate
+                    dueDate={dueDate}
+                    setDueDate={(date) => {
+                        setDueDate(date)
+                    }}
                 />
 
                 <div className={styles.buttonGroup}>

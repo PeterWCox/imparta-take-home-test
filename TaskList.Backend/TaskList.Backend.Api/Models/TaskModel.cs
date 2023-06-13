@@ -22,7 +22,7 @@ public class TaskModel
     public bool IsDone { get; set; }
     public bool IsMyDay { get; set; }
     public bool IsImportant { get; set; }
-    public DateTime DueDate { get; set; }
+    public DateTime? DueDate { get; set; }
     public string Notes { get; set; }
     public ICollection<SubTaskModel> SubTasks { get; } = new List<SubTaskModel>(); // Collection navigation containing dependents
 
