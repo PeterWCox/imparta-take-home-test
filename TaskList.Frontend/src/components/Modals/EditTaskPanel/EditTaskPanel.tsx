@@ -43,8 +43,8 @@ export const EditTaskPanel = (props: IEditTaskPanelProps) => {
     } = useForm<ValidationSchema>({
         resolver: zodResolver(validationSchema),
         defaultValues: {
-            title: props.task.title,
-            notes: props.task.notes,
+            title: props.task.title ?? '',
+            notes: props.task.notes ?? '',
         },
     })
 
@@ -59,11 +59,11 @@ export const EditTaskPanel = (props: IEditTaskPanelProps) => {
             isLightDismiss
             headerText="Edit Task"
             closeButtonAriaLabel="Close"
-            isFooterAtBottom={true}
         >
             <form
                 className={styles.form}
                 onSubmit={handleSubmit((data) => {
+                    console.log(data)
                     editTask({
                         id: props.task.id,
                         title: data.title,

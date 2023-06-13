@@ -9,7 +9,7 @@ export interface Task {
     isMyDay: boolean
     isImportant: boolean
     dueDate: Date | null
-    notes: string
+    notes: string | null
     subTasks: SubTask[]
 }
 

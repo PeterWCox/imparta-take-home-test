@@ -25,3 +25,5 @@ TaskList.Backend/.vs
 **/bin
 **/obj
 TaskList.Frontend/.env
+TaskList.Backend/TaskList.Backend.Api/published
+

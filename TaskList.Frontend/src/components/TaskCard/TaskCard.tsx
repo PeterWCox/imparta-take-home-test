@@ -220,6 +220,7 @@ export const TaskCard = (props: ITaskCardProps) => {
                         style={{
                             fontSize: '1.5rem',
                             marginRight: '1rem',
+                            cursor: 'pointer',
                         }}
                     />
                 </div>

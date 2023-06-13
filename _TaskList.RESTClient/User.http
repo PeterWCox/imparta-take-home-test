@@ -1,0 +1,9 @@
+
+# ********** USERS ************ # 
+
+# GET ALL USERS
+GET {{baseUrl}}/User/All
+Authorization: Bearer {{token}}
+content-type: application/json
+
+

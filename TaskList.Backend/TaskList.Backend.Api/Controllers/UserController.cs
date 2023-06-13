@@ -73,85 +73,48 @@ public class UserController : ControllerBase
         }
     }
 
-    // // PATCH: api/User
-    // [HttpPut]
-    // public async Task<IActionResult> UpdateUserByBearerToken(ApplicationUser updatedUser)
-    // {
-    //     try
-    //     {
+    // GET: api/Users
+    [HttpGet("All")]
+    public async Task<IActionResult> GetUsers()
+    {
+        try
+        {
+            // Check if there is a bearer token in the request
+            if (!Request.Headers.ContainsKey("Authorization"))
+            {
+                return Unauthorized();
+            }
 
-    //         //Get bearer token from Headers as a string 
-    //         var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
-    //         //Verify token
-    //         var user = await GetUserFromToken(token);
-    //         if (user is null)
-    //         {
-    //             return Unauthorized();
-    //         }
+            //Get bearer token from Headers as a string 
+            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
-    //         //Update the user
-    //         user.Email = updatedUser.Email;
-    //         user.UserName = updatedUser.UserName;
+            //Verify token
+            var user = await GetUserFromToken(token);
+            if (user is null)
+            {
+                return Unauthorized();
+            }
 
-    //         IdentityResult result = await _userManager.UpdateAsync(user);
-    //         if (!result.Succeeded)
-    //         {
-    //             throw new Exception("An internal server has occured. Please try again later.");
-    //         }
+            var users = _userManager.Users.Select(u => new
+            {
+                u.Id,
+                u.UserName,
+                u.Email
+            });
 
-    //         return NoContent();
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         return StatusCode(StatusCodes.Status500InternalServerError, new Response
-    //         {
-    //             Status = "Error",
-    //             Message = e.Message
-    //         });
-    //     }
-    // }
-
-    // // DELETE: api/User
-    // [HttpDelete]
-    // public async Task<IActionResult> DeleteUserByBearerToken()
-    // {
-    //     try
-    //     {
-
-    //         //Get bearer token from Headers as a string 
-    //         var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-
-    //         //Verify token
-    //         var user = await GetUserFromToken(token);
-    //         if (user is null)
-    //         {
-    //             return Unauthorized();
-    //         }
-
-    //         //Delete the user
-    //         IdentityResult result = await _userManager.DeleteAsync(user);
-    //         if (!result.Succeeded)
-    //         {
-    //             return StatusCode(StatusCodes.Status500InternalServerError, new Response
-    //             {
-    //                 Status = "Error",
-    //                 Message = "An internal server has occured. Please try again later."
-    //             });
-    //         }
-
-    //         return NoContent();
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         return StatusCode(StatusCodes.Status500InternalServerError, new Response
-    //         {
-    //             Status = "Error",
-    //             Message = e.Message
-    //         });
-    //     }
-    // }
-
+            //Return the user
+            return Ok(users);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new Response
+            {
+                Status = "Error",
+                Message = e.Message
+            });
+        }
+    }
 
 
 
